@@ -1,8 +1,12 @@
-class ZiangqiGame:
+from Board import Board
+
+class XiangqiGame():
     def __init__(self):
+        self.board = Board()
 
     def get_game_state(self):
         """ Returns 'UNFINISHED', 'RED_WON', or 'BLACK_WON" """
+        pass
 
     def is_in_check(self, player):
         """
@@ -10,6 +14,7 @@ class ZiangqiGame:
         :param player: 'red' or black
         :return: True if that player is in check, False otherwise
         """
+        pass
 
     def make_move(self, from_pos, to_pos):
         """
@@ -26,3 +31,6 @@ class ZiangqiGame:
         update whose turn it is, and return True.
 
         """
+        pass
+
+        
