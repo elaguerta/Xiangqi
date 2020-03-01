@@ -20,14 +20,6 @@ class Board:
             ['-' for file in self._files] for rank in self._ranks  # initialize all positions to empty string
         ]
 
-
-    def setup_pieces(self, pieces):
-        """
-
-        :return:
-        """
-
-
     def get_castle_spots(self, player):
         """
         :param player: "red" or "black"
@@ -56,6 +48,15 @@ class Board:
         """ returns the current board state as a 2D matrix. Positions that are not occupied are
         set to the empty string."""
         return self._board_state
+
+    def get_occupant(self, pos):
+        """returns the piece on location pos, or False if pos is vacant"""
+        pos_rank = pos[1]
+        pos_file = pos[0]
+        piece = self._board_state[pos_rank][pos_file]
+        if not piece:
+            return False
+        return piece
 
     def display_board(self, num_spaces = 2):
         delim = ' ' * num_spaces

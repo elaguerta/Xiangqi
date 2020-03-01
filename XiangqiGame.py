@@ -32,6 +32,19 @@ class XiangqiGame():
         update whose turn it is, and return True.
 
         """
-        pass
+        if from_pos == to_pos:                  # do not allow a move that does not change the board state
+            return False
+
+        board_state = self.board.get_board_state()
+        from_pos_file = from_pos[0]
+        from_pos_rank = from_pos[1]
+        piece = board_state[from_pos_file][from_pos_rank]
+
+        if not piece:                           # the from position is empty
+            return False
+        elif piece.get_side != self._turn:      # the piece on the from position does not belong to this player
+            return False
+        else:
+            return piece.move(to_pos, self._board)
 
         
