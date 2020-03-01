@@ -1,11 +1,9 @@
+
 class Board:
     def __init__(self):
         """ initializes a blank Xiangqi Board"""
         self._files = ['a', 'b', 'c', 'd', 'd', 'e', 'f', 'g', 'h', 'i']    # column letters, or ranks
         self._ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']   # row numbers, or files
-        self._board_state = [                                               # board state represented as a 2D array
-            ['-' for file in self._files] for rank in self._ranks              # initialize all positions to empty string
-        ]
 
         # store the set of all locations that comprise the castle spots for red
         self._red_castle_spots = {'d1', 'd2', 'd3', 'e1', 'e2', 'e3', 'f1', 'f2', 'f3'}
@@ -16,6 +14,19 @@ class Board:
         self._red_river_bank = '5'
         # store the rank that represents the boundary of the river on the black side
         self._black_river_bank = '6'
+
+        # initialize empty board
+        self._board_state = [  # board state represented as a 2D array
+            ['-' for file in self._files] for rank in self._ranks  # initialize all positions to empty string
+        ]
+
+
+    def setup_pieces(self, pieces):
+        """
+
+        :return:
+        """
+
 
     def get_castle_spots(self, player):
         """

@@ -2,7 +2,8 @@ from Board import Board
 
 class XiangqiGame():
     def __init__(self):
-        self.board = Board()
+        self._board = Board()
+        self._turn = 'red'          # red goes first
 
     def get_game_state(self):
         """ Returns 'UNFINISHED', 'RED_WON', or 'BLACK_WON" """
