@@ -21,7 +21,7 @@ class Piece:
     def num_jumps(self, path):
         """ returns number of pieces that would be jumped along path"""
         jumps = 0
-        for position,occupant in path:
+        for position,occupant in path[0:-1]:        # look at every step except the last step in the path
             if occupant:
                 jumps +=1
         return jumps
@@ -58,8 +58,8 @@ class Piece:
         Sets self._board at the piece's previous position to None.
         """
         if not self.is_legal(to_pos):
-
             return False
+
 
         prev_pos = self._pos
         if prev_pos:                                    # tell the board to clear the piece's current position

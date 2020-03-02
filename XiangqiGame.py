@@ -11,6 +11,9 @@ class XiangqiGame():
 
         # initialize chariot pieces, at files 'a' and 'i'
         self._pieces.add(ChariotPiece(self._board, 'red', 'a1'))
+        self._pieces.add(ChariotPiece(self._board, 'black', 'a10'))
+        self._pieces.add(ChariotPiece(self._board, 'red', 'i1'))
+        self._pieces.add(ChariotPiece(self._board, 'black', 'i10'))
 
         # place all pieces in initial positions
         for piece in self._pieces:
@@ -57,5 +60,5 @@ class XiangqiGame():
             return piece.move(to_pos)
 
     def out_of_range(self, pos):
-        rank, file = self._board.get_loc_from_pos(pos)
-        return rank > 9 or file > 8
+        rank, file = pos[1:], pos[0]
+        return rank not in self._board.get_ranks() or file not in self._board.get_files()
