@@ -8,14 +8,24 @@ from Board import Board
 
 class TestGame(unittest.TestCase):
 
-    def test_board (self):
-        """ test Board class"""
-        my_board = Board()
-        self.assertEqual(my_board.get_castle_spots('red'), {'d1', 'd2', 'd3', 'e1', 'e2', 'e3', 'f1', 'f2', 'f3'})
-        self.assertEqual(my_board.get_castle_spots('black'), {'d10', 'd9', 'd8', 'e10', 'e9', 'e8', 'f10', 'f9', 'f8'})
-        self.assertEqual(my_board.get_river_bank('red'), '5')
-        self.assertEqual(my_board.get_river_bank('black'), '6')
+    # def test_board (self):
+    #     """ test Board class"""
+    #     my_board = Board()
+    #     self.assertEqual(my_board.get_castle_spots('red'), {'d1', 'd2', 'd3', 'e1', 'e2', 'e3', 'f1', 'f2', 'f3'})
+    #     self.assertEqual(my_board.get_castle_spots('black'), {'d10', 'd9', 'd8', 'e10', 'e9', 'e8', 'f10', 'f9', 'f8'})
+    #     self.assertEqual(my_board.get_river_bank('red'), '5')
+    #     self.assertEqual(my_board.get_river_bank('black'), '6')
+    #     my_board.display_board()
+
+    def test_chariot(self):
+        """ test chariot piece"""
+        game = XiangqiGame()
+        my_board = game._board
+        #my_board.display_board()
+
+        print(game.make_move('a1', 'a4'))
         my_board.display_board()
+
 
 
     # def test_example(self):

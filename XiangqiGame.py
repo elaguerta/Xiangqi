@@ -1,9 +1,20 @@
 from Board import Board
+from ChariotPiece import ChariotPiece
 
 class XiangqiGame():
     def __init__(self):
         self._board = Board()
         self._turn = 'red'          # red goes first
+
+        # instantiate pieces
+        self._pieces = set()
+
+        # initialize chariot pieces, at files 'a' and 'i'
+        self._pieces.add(ChariotPiece(self._board, 'red', 'a1'))
+
+        # place all pieces in initial positions
+        for piece in self._pieces:
+            self._board.place_piece(piece, piece.get_pos())
 
     def get_game_state(self):
         """ Returns 'UNFINISHED', 'RED_WON', or 'BLACK_WON" """
@@ -34,17 +45,17 @@ class XiangqiGame():
         """
         if from_pos == to_pos:                  # do not allow a move that does not change the board state
             return False
-
-        board_state = self.board.get_board_state()
-        from_pos_file = from_pos[0]
-        from_pos_rank = from_pos[1]
-        piece = board_state[from_pos_file][from_pos_rank]
-
-        if not piece:                           # the from position is empty
+        if self.out_of_range(from_pos) or self.out_of_range(to_pos):    # validate that positions are within range
             return False
-        elif piece.get_side != self._turn:      # the piece on the from position does not belong to this player
+
+        piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos
+        if not piece:                                  # the from position is empty
+            return False
+        elif piece.get_side() != self._turn:             # the piece on the from position does not belong to this player
             return False
         else:
-            return piece.move(to_pos, self._board)
+            return piece.move(to_pos)
 
-        
+    def out_of_range(self, pos):
+        rank, file = self._board.get_loc_from_pos(pos)
+        return rank > 9 or file > 8
