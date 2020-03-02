@@ -1,13 +1,20 @@
 from Board import Board
 from ChariotPiece import ChariotPiece
+from GeneralPiece import GeneralPiece
 
 class XiangqiGame():
     def __init__(self):
         self._board = Board()
         self._turn = 'red'          # red goes first
+        self._next_turn = 'black'   # for easy toggling between turns
+        self._game_state = 'UNFINISHED'
 
         # instantiate pieces
         self._pieces = set()
+
+        # initialize generals, at file e
+        self._pieces.add(GeneralPiece(self._board, 'red', 'e1'))
+        self._pieces.add(GeneralPiece(self._board, 'black', 'e10'))
 
         # initialize chariot pieces, at files 'a' and 'i'
         self._pieces.add(ChariotPiece(self._board, 'red', 'a1'))
@@ -46,18 +53,36 @@ class XiangqiGame():
         update whose turn it is, and return True.
 
         """
+        if self._game_state != 'UNFINISHED':    # if the game has already been won, return False
+            return False
         if from_pos == to_pos:                  # do not allow a move that does not change the board state
             return False
         if self.out_of_range(from_pos) or self.out_of_range(to_pos):    # validate that positions are within range
             return False
 
         piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos
-        if not piece:                                  # the from position is empty
+        if not piece:                                   # the from position is empty
             return False
-        elif piece.get_side() != self._turn:             # the piece on the from position does not belong to this player
+        if piece.get_side() != self._turn:             # the piece on the from position does not belong to this player
             return False
-        else:
-            return piece.move(to_pos)
+
+        # try to make the move
+        try_move = piece.move(to_pos)
+        if not try_move:                            # if not successful, return False
+            return False
+
+        # if move is successful, update the turn
+        self._turn, self._next_turn = self._next_turn, self._turn
+        # update the game state
+        self.update_game_state()
+
+        return True
+
+    def update_game_state(self):
+        """ checks if there is a checkmate or stalemate and updates game state if so. Otherwise,
+         does nothing """
+        pass
+
 
     def out_of_range(self, pos):
         rank, file = pos[1:], pos[0]

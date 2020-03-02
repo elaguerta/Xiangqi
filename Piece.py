@@ -7,6 +7,11 @@ class Piece:
         self._max_path_length = None    # depends on piece, default is unlimited
         self._jumps = 0                 # number of other pieces allowed to jump. Only cannon jumps - exactly 1 - piece.
 
+        if self._side == 'red':
+            self._opp = 'black'
+        else:
+            self._opp = 'red'
+
     def get_path(self, bearing, to_pos):
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along bearing.
         Do not include current location in the list. Last item is to_pos.
@@ -40,14 +45,16 @@ class Piece:
 
         if not try_path:                            # return False if no path to to_pos
             return False
-        elif self._max_path_length:  # return False if path length is longer than the piece can move
+
+        if self._max_path_length:  # return False if path length is longer than the piece can move
             if len(try_path) > self._max_path_length:
                 return False
         # return False if pieces jumped along path do not obey the piece's restrictions
-        elif self.num_jumps(try_path) != self._jumps:
+
+        if self.num_jumps(try_path) != self._jumps:
             return False
-        else:
-            return True
+
+        return True
 
     def move(self, to_pos):
         """
@@ -59,15 +66,15 @@ class Piece:
         """
         if not self.is_legal(to_pos):
             return False
-
-
         prev_pos = self._pos
         if prev_pos:                                    # tell the board to clear the piece's current position
             self._board.clear_pos(prev_pos)
         captive = self._board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
         self._board.place_piece(self, to_pos)           # tell the board that to_pos is occupied by this piece
         self._pos = to_pos                              # update this piece's self._pos
-        return captive                                  # return the piece, if any, that would be captured
+        if captive:                                     # return the piece that was captured by this move, if any
+            return captive
+        return True
 
     def get_side(self):
         return self._side

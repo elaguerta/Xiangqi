@@ -1,16 +1,13 @@
 from Piece import Piece
 
 class ChariotPiece(Piece):
+    num_per_game = 20
+    id_generator = (str(num) for num in range(1, num_per_game + 1))
+
     def __init__(self, board, player, pos):
         super().__init__(board, player, pos)
         self._movement = 'ortho'  # ortho, diagonal, or L shaped
-
-
-    # def move(self, to_pos, board):
-    #     """ moves and captures any distance orthogonally. may not jump over intervening pieces"""
-    #     path = super.get_ortho_path(self, to_pos)
-    #     if not ortho_path:
-    #         return False
+        self._id = next(ChariotPiece.id_generator)
 
     def __repr__(self):
-        return self._side[0] + "Ch"
+        return self._side[0] + "Ch" + self._id
