@@ -30,10 +30,10 @@ class SoldierPiece(Piece):
 
         # if the move is a retreat, return False
         # red retreats along the same file from a higher rank to a lower rank
-        if from_file == to_file and self.__side == 'red' and to_rank < from_rank:
+        if from_file == to_file and self._side == 'red' and to_rank < from_rank:
             return False
         # black retreats along the same file from a lower rank to a higher rank
-        if from_file == to_file and self.__side == 'black' and to_rank > from_rank:
+        if from_file == to_file and self._side == 'black' and to_rank > from_rank:
             return False
 
         # if the move is horizontal and the Soldier has not yet crossed the river, return false
@@ -41,11 +41,14 @@ class SoldierPiece(Piece):
         if to_pos[1:] == self._pos[1:] and not self._crossed_river:
             return False
 
+        # if we made it this far, move is legal for the Soldier. Return True
+        return True
 
 
 
     def move(self, to_pos):
-        super().move(to_pos)        # move as usual
+        move_result = super().move(to_pos)        # move as usual
+
         # if red makes it to 6, or black makes it to 5, river was crossed. Set self._crossed_river to True
         if self._side == 'red' and to_pos[1:] == '6':
             self._crossed_river = True
@@ -53,4 +56,4 @@ class SoldierPiece(Piece):
         if self._side == 'black' and to_pos[1:] == '5':
             self._crossed_river = True
 
-        return True
+        return move_result

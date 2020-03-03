@@ -70,14 +70,27 @@ class TestGame(unittest.TestCase):
         """ tests basic rules limiting soldier's movement"""
         game = XiangqiGame()
         board = game._board
-        board.display_board()
 
         # move by advancing one point
         self.assertEqual(game.make_move('e4', 'e5'), True)
         self.assertEqual(game.make_move('e7', 'e6'), True)
 
         #capture by advancing one point
-        piece =
+        captive = board.get_piece_from_pos('e6')  # black soldier
+        self.assertEqual(game.make_move('e5', 'e6'), True) # red captures black
+        self.assertEqual(str(captive)[0:-1], 'bSo')
+
+
+        # try to move horizontally having not crossed river
+        self.assertEqual(game.make_move('c7', 'b7'), False) # black attempts move
+
+        # move horizontally after crossing river
+        game.make_move('c7', 'c6')
+        game.update_turn()  # red turn
+        game.make_move('c6', 'c5') # black crosses river
+        game.update_turn() # red turn
+        self.assertEqual(game.make_move('c5', 'b5'), True) #black moves horizontally
+
 
 def test_game_state(self):
         pass
