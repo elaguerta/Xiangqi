@@ -14,8 +14,8 @@ class TestGame(unittest.TestCase):
         game = XiangqiGame()
         my_board = game._board
 
-        # add jump test here when board is complete
-
+        # try to jump over a soldier. Should fail.
+        self.assertEqual(game.make_move('a1', 'a5'), False)
 
         # try to move chariot diagonally from a1 to b2. Should fail.
         self.assertEqual(game.make_move('a1', 'b2'), False)
@@ -30,10 +30,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('a10', 'a8'), True)
         self.assertEqual(game.make_move('i10', 'g10'), True)
         game._turn = 'red'
-        # move red chariot at a1 to black chariot at a1. Should return black chariot. Delete test when rest of board
-        # is set
-        black_chariot = my_board.get_piece_from_pos('a10')
-        game.make_move('a1', 'a10')
 
     def test_move(self):
         """ tests move logic at game level"""
@@ -64,7 +60,22 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('e9', 'd9'), True)          # move black general west
         self.assertEqual(game.make_move('f2', 'g2'), False)         # try to leave castle, should return False
         self.assertEqual(game.make_move('d9', 'c9'), False)
-        # write test for flying general here
+
+        # put player in check using flying general
+        game = XiangqiGame()
+        board = game._board
+        e7 = board.get_piece_from_pos('e7') # remove black soldier on e7
+        board.clear_pos('e7')
+        board.clear_piece(e7)
+        e4 = board.get_piece_from_pos('e4')  # remove red soldier on e4
+        board.clear_pos('e4')
+        board.clear_piece(e4)
+
+        # now black should be in check from flying general
+        self.assertEqual(game.is_in_check('black'), True)
+        self.assertEqual(game.is_in_check('red'), False)
+        red_gen = board.get_piece_from_pos('e1')
+        self.assertEqual(red_gen.is_flying_general('e10'), True)
 
     def test_soldier(self):
         """ tests basic rules limiting soldier's movement"""

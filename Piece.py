@@ -70,10 +70,11 @@ class Piece:
         if prev_pos:                                    # tell the board to clear the piece's current position
             self._board.clear_pos(prev_pos)
         captive = self._board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
+        if captive and captive.get_side() == self._side:    # if the to_pos is occupied by a friend, return False
+            return False
         self._board.place_piece(self, to_pos)           # tell the board that to_pos is occupied by this piece
         self._pos = to_pos                              # update this piece's self._pos
-        if captive:                                     # return the piece that was captured by this move, if any
-            return captive
+        self._board.clear_piece(captive)                # clear the captured piece from the board
         return True
 
     def get_side(self):

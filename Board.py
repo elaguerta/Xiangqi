@@ -32,21 +32,9 @@ class Board:
         else:
             return False
 
-    def get_river_bank(self, player):
-        """
-        :param player: "red" or "black"
-        :return: the rank that represents the boundary of the river on the player's side
-        """
-        if player == "red":
-            return self._red_river_bank
-        elif player == "black":
-            return self._black_river_bank
-        else:
-            return False
-
     def get_board_state(self):
-        """ returns the current board state as a 2D matrix. Positions that are not occupied are
-        set to the empty string."""
+        """ returns pointer to 2D matrix that tracks board state. Positions that are not occupied are
+        set to None."""
         return self._board_state
 
     def display_board(self, num_spaces = 2):
@@ -71,12 +59,10 @@ class Board:
 
     def place_piece(self, piece, to_pos):
         """
-        Sets to_pos to be occupied by item. Returns the piece, if any, that was previously on to_pos.
-        Note: does not check if the move is legal.
+        Sets to_pos to be occupied by piece.
         :param item:  a Piece of any type
         :param to_pos: A position that will be occupied by the piece
-        :return: Sets to_pos to be occupied by piece. Get's the piece's previous pos, if any, sets
-        the previous pos to None. Returns any piece that was previously on to_pos. 
+        :return: Sets to_pos to be occupied by piece. No return value.
         """
         rank,file = self.get_loc_from_pos(to_pos)
         self._board_state[rank][file] = piece  # piece now occupies to_pos
@@ -115,8 +101,7 @@ class Board:
 
     def get_ortho_path(self, from_pos, to_pos):
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along ortho.
-        Do not include current location in the list. Last item is to_pos.
-        Does not check if there is a valid ortho path from from_pos to to_pos. That is the responsibility of Piece."""
+        Do not include current location in the list. Last item is to_pos. """
 
         to_rank, to_file = self.get_loc_from_pos(to_pos)
         from_rank, from_file = self.get_loc_from_pos(from_pos)

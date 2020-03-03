@@ -47,10 +47,20 @@ class XiangqiGame():
     def is_in_check(self, player):
         """
         Determines if player is in check.
-        :param player: 'red' or black
+        :param player: 'red' or 'black'
         :return: True if that player is in check, False otherwise
         """
-        pass
+        # get the position of this player's general
+        general_pos = self._board.get_general_pos(player)
+
+        # if there is a legal move from any opposing piece to general_pos, and it is opponent's turn, return True
+        if self._turn != player:
+            for piece in self._pieces:
+                if piece.get_side() != player and piece.is_legal(general_pos):
+                    return True
+
+        return False
+
 
     def make_move(self, from_pos, to_pos):
         """
