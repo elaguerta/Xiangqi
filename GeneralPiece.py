@@ -5,7 +5,6 @@ class GeneralPiece(Piece):
         super().__init__(board, player, pos)
         self._movement = 'ortho'  #
         self._max_path_length = 1
-        self._jumps = 0
 
     def __repr__(self):
         return self._side[0] + "Ge"
@@ -14,7 +13,7 @@ class GeneralPiece(Piece):
         """ calls super().is_legal and then checks the additional restrictions on the general's movement:
         the general must stay in the palace, and the generals cannot "see" each other """
 
-        # check the typical conditions for all pieces
+        # check the conditions checked for all pieces
         if not super().is_legal(to_pos):
             return False
 
@@ -25,8 +24,7 @@ class GeneralPiece(Piece):
         #check that to_pos would not allow the generals to "see" each other. This means two generals along the same
         #file with no intervening pieces.
 
-        #get the other general's position
-        other_gen_pos = self._board.get_general(self._opp)
+        other_gen_pos = self._board.get_general_pos(self._opp)  #get the other general's position
         if other_gen_pos[0] == self._pos[0]:             # if both generals on the same file, get the ortho path
             path_to_gen = self.get_path('ortho', other_gen_pos)
             if self.num_jumps(path_to_gen) == 0:        # if no intervening pieces

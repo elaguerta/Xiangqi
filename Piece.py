@@ -3,10 +3,10 @@ class Piece:
         self._board = board
         self._side = player
         self._pos = pos
-        self._movement = None   # ortho, diagonal, or L shaped
+        self._movement = None           # ortho, diagonal, or L shaped
         self._max_path_length = None    # depends on piece, default is unlimited
         self._jumps = 0                 # number of other pieces allowed to jump. Only cannon jumps - exactly 1 - piece.
-
+        # save the opposing side as an instance variable
         if self._side == 'red':
             self._opp = 'black'
         else:

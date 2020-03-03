@@ -5,7 +5,7 @@ class Board:
     board_state location """
     def __init__(self):
         """ initializes a blank Xiangqi Board"""
-        self._files = ['a', 'b', 'c', 'd', 'd', 'e', 'f', 'g', 'h', 'i']    # column letters, or ranks
+        self._files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']    # column letters, or ranks
         self._ranks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']   # row numbers, or files
 
         # store the set of all locations that comprise the castle spots for red
@@ -13,15 +13,12 @@ class Board:
         # store the set of all locations that comprise the castle spots for black
         self._black_castle_spots = {'d10', 'd9', 'd8', 'e10', 'e9', 'e8', 'f10', 'f9', 'f8'}
 
-        # store the rank that represents the boundary of the river on the red side
-        self._red_river_bank = '5'
-        # store the rank that represents the boundary of the river on the black side
-        self._black_river_bank = '6'
-
         # initialize empty board
         self._board_state = [  # board state represented as a 2D array
             [ None for file in self._files] for rank in self._ranks  # initialize all positions to None
         ]
+
+        self._piece_state = {}          # dictionary of piece: pos pairs. When pieces are captured, value is set to None
 
     def get_castle_spots(self, player):
         """
@@ -54,9 +51,8 @@ class Board:
 
     def display_board(self, num_spaces = 2):
         delim = ' ' * num_spaces
-        print( (delim * 10), "RED")
-        print(' ', delim, ("  " + delim).join(self._files))
-        for rank in self._ranks:
+        print( (delim * 10), "BLACK")
+        for rank in reversed(self._ranks):                      #print black side first, from rank 10 to rank 1
             rank_state = self._board_state[int(rank) - 1]
             if rank == '10':
                 line = rank + ' ' * (num_spaces - 1)
@@ -66,9 +62,12 @@ class Board:
                 if item is None:
                     line += '---' + delim
                 else:
-                    line += repr(item) + delim
+                    line += repr(item)[:3] + delim # display first 3 characters of string representation, plus delim
             print(line)
-        print(delim * 10, "BLACK")
+        print(' ', delim, ("  " + delim).join(self._files))         # print letter files in order
+        print(delim * 10, "RED")
+        print()
+        print()
 
     def place_piece(self, piece, to_pos):
         """
@@ -81,6 +80,11 @@ class Board:
         """
         rank,file = self.get_loc_from_pos(to_pos)
         self._board_state[rank][file] = piece  # piece now occupies to_pos
+        self._piece_state[str(piece)] = to_pos
+
+    def clear_piece(self, piece):
+        """ sets the piece_state for None. Used for keeping track of captures"""
+        self._piece_state[str(piece)] = None
 
     def clear_pos(self, pos):
         """ Sets pos to None. Used for clearing a pos when a piece moves away from pos"""
@@ -105,6 +109,10 @@ class Board:
         rank, file = self.get_loc_from_pos(pos)
         return self._board_state[rank][file]
 
+    def get_general_pos(self, player):
+        """ returns the pos of the general on the side of player"""
+        return self._piece_state[player[0]+"Ge"]
+
     def get_ortho_path(self, from_pos, to_pos):
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along ortho.
         Do not include current location in the list. Last item is to_pos.
@@ -113,13 +121,32 @@ class Board:
         to_rank, to_file = self.get_loc_from_pos(to_pos)
         from_rank, from_file = self.get_loc_from_pos(from_pos)
         path = []
+        flip_dir = False
+
+        if from_rank != to_rank and from_file != to_file: # return empty path if to_pos is not ortho to from_pos
+            return path
+
+        if to_rank < from_rank:
+            flip_dir = True
+        if to_file < from_file:
+            flip_dir = True
+
+        if from_rank == to_rank and not flip_dir:
+            file_range = range(from_file + 1, to_file + 1)
+        elif from_rank == to_rank and flip_dir:
+            file_range = range(from_file - 1, to_file - 1, -1)
+        elif from_file == to_file and not flip_dir:
+            rank_range = range(from_rank + 1, to_rank + 1)
+        elif from_file == to_file and flip_dir:
+            rank_range = range(from_rank - 1, to_rank - 1, -1)
+
         if from_rank == to_rank:            # get positions along rank from [from_file +1, to_file]
-            for file in range(from_file + 1, to_file + 1):
+            for file in file_range:
                 this_pos = self.get_pos_from_loc((to_rank, file))
-                occupant = self._board.get_piece_from_pos(this_pos)
+                occupant = self.get_piece_from_pos(this_pos)
                 path.append((this_pos, occupant))
         elif from_file == to_file:
-            for rank in range(from_rank + 1, to_rank + 1):
+            for rank in rank_range:
                 this_pos = self.get_pos_from_loc((rank, to_file))
                 occupant = self.get_piece_from_pos(this_pos)
                 path.append((this_pos, occupant))

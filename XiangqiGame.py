@@ -1,6 +1,7 @@
 from Board import Board
 from ChariotPiece import ChariotPiece
 from GeneralPiece import GeneralPiece
+from SoldierPiece import SoldierPiece
 
 class XiangqiGame():
     def __init__(self):
@@ -21,6 +22,19 @@ class XiangqiGame():
         self._pieces.add(ChariotPiece(self._board, 'black', 'a10'))
         self._pieces.add(ChariotPiece(self._board, 'red', 'i1'))
         self._pieces.add(ChariotPiece(self._board, 'black', 'i10'))
+
+        # add soldiers, at a, c, e, g, i; 7 and 4
+        self._pieces.add(SoldierPiece(self._board, 'red', 'a7'))
+        self._pieces.add(SoldierPiece(self._board, 'red', 'c7'))
+        self._pieces.add(SoldierPiece(self._board, 'red', 'e7'))
+        self._pieces.add(SoldierPiece(self._board, 'red', 'g7'))
+        self._pieces.add(SoldierPiece(self._board, 'red', 'i7'))
+
+        self._pieces.add(SoldierPiece(self._board, 'black', 'a4'))
+        self._pieces.add(SoldierPiece(self._board, 'black', 'c4'))
+        self._pieces.add(SoldierPiece(self._board, 'black', 'e4'))
+        self._pieces.add(SoldierPiece(self._board, 'black', 'g4'))
+        self._pieces.add(SoldierPiece(self._board, 'black', 'i4'))
 
         # place all pieces in initial positions
         for piece in self._pieces:
@@ -71,11 +85,9 @@ class XiangqiGame():
         if not try_move:                            # if not successful, return False
             return False
 
-        # if move is successful, update the turn
+        # If we got to this point, move succeeded, update the turn, update the game state, and return True
         self._turn, self._next_turn = self._next_turn, self._turn
-        # update the game state
         self.update_game_state()
-
         return True
 
     def update_game_state(self):
