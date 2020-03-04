@@ -12,9 +12,8 @@ class TestGame(unittest.TestCase):
     def test_piece(self):
         """ test basic piece logic on chariot piece"""
         game = XiangqiGame()
-        my_board = game._board
 
-        # try to jump over a soldier. Should fail.
+        #try to jump over a soldier. Should fail.
         self.assertEqual(game.make_move('a1', 'a5'), False)
 
         # try to move chariot diagonally from a1 to b2. Should fail.
@@ -26,10 +25,10 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('a1', 'a11'), False)
 
         # move black chariot in "opposite" directions
-        game._turn = 'black'
+        game.update_turn()          # make it black's turn
         self.assertEqual(game.make_move('a10', 'a8'), True)
+        game.update_turn()
         self.assertEqual(game.make_move('i10', 'g10'), True)
-        game._turn = 'red'
 
     def test_move(self):
         """ tests move logic at game level"""

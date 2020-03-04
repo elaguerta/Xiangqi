@@ -1,10 +1,12 @@
 from Piece import Piece
 
 class GeneralPiece(Piece):
-    def __init__(self, board, player, pos):
-        super().__init__(board, player, pos)
+    general_positions = {'red':'e1', 'black':'e10'}
+    def __init__(self, player, board):
+        super().__init__(player, board)
         self._movement = 'ortho'  #
         self._max_path_length = 1
+        self._pos = GeneralPiece.general_positions[player]
 
     def __repr__(self):
         return self._side[0] + "Ge"
@@ -31,9 +33,9 @@ class GeneralPiece(Piece):
         return True
 
     def is_flying_general(self, to_pos):
-        """ helper method to is_legal. Returns True if this general can execute 'flying general' against opponent"""
+        """ helper method to is_legal. Returns True if this general's move to to_pos is a flying general move"""
         other_gen_pos = self._board.get_general_pos(self._opp)  # get the other general's position
         if other_gen_pos == to_pos and other_gen_pos[0] == self._pos[0]:  # if both generals on the same file
-            path_to_gen = self.get_path('ortho', other_gen_pos)            # get ortho path to pieces
+            path_to_gen = self.get_path('ortho', other_gen_pos)            # get ortho path to general
             if self.num_jumps(path_to_gen) == 0:        # if no intervening pieces, flying general is possible
                 return True

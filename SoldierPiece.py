@@ -1,17 +1,21 @@
 from Piece import Piece
 
 class SoldierPiece(Piece):
-    num_per_game = 10
-    instances = 1
+    soldier_positions = {
+        'red': ['a4', 'c4', 'e4', 'g4', 'i4'],
+        'black': ['a7', 'c7', 'e7', 'g7', 'i7']
+    }
 
-    def __init__(self, board, player, pos):
-        super().__init__(board, player, pos)
+    def __init__(self, player, board, id_num):
+        super().__init__(player, board)
         self._movement = 'ortho'  # ortho, diagonal, or L shaped
-        self._id = SoldierPiece.instances % SoldierPiece.num_per_game
-        SoldierPiece.instances += 1
-        self._movement = 'ortho'  #
         self._max_path_length = 1
         self._crossed_river = False
+
+        # assign a position.
+        self._id = id_num
+        self._pos = SoldierPiece.soldier_positions[player][id_num - 1]
+
 
     def __repr__(self):
         return self._side[0] + "So" + str(self._id)

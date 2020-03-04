@@ -96,8 +96,8 @@ class Board:
         return self._board_state[rank][file]
 
     def get_general_pos(self, player):
-        """ returns the pos of the general on the side of player"""
-        return self._piece_state[player[0]+"Ge"]
+        """ returns the position of the general on side of player"""
+        return self._piece_state[ player[0] + "Ge"]
 
     def get_ortho_path(self, from_pos, to_pos):
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along ortho.
