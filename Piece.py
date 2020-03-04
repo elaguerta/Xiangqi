@@ -11,13 +11,14 @@ class Piece:
         else:
             self._opp = 'red'
 
-    def get_path(self, bearing, to_pos):
+    def get_path(self, to_pos):
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along bearing.
         Do not include current location in the list. Last item is to_pos.
         False if no such path along bearing"""
+
         to_rank, to_file = (to_pos[1:], to_pos[0])
         from_rank, from_file = (self._pos[1:], self._pos[0])
-        if bearing == 'ortho' and (to_rank != from_rank and to_file != from_file):
+        if self._movement == 'ortho' and (to_rank != from_rank and to_file != from_file):
             return False
         else:
             return self._board.get_ortho_path(self._pos, to_pos)
@@ -35,12 +36,12 @@ class Piece:
         return self._pos
 
     def is_legal(self, to_pos):
-        """ returns True if it is legal for the piece to move to to_pos, given the current state of the board,
+        """ returns a legal path for the piece to move to to_pos, given the current state of the board,
         false otherwise"""
         if self._pos == to_pos:             # do not allow moves that would not change the game state
             return False
 
-        try_path = self.get_path(self._movement, to_pos)
+        try_path = self.get_path(to_pos)
 
         if not try_path:                            # return False if no path to to_pos
             return False

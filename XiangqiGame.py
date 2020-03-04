@@ -31,36 +31,19 @@ class XiangqiGame():
         general_pos = player.get_general_pos()
         # ask the opponent if they can attack the general's position
         opponent = self.get_opponent(side)
-        return opponent.can_attack(general_pos)
+        if opponent.get_attacks(general_pos):
+            return True
+        return False
 
-    def is_in_checkmate(self, player):
-        """ returns True if player is in checkmate. Player is in checkmate if there is no one move that can defend against
-        all current checks"""
-        pass
-
-    def defend_check(self, player, attack_piece, path):
-        """ returns a (from_pos, to_pos) move that would defend player from attack piece. Returns False if no such move.
-        Attack_piece is a piece that is placing the other general in check.
-        Path is the ordered list of [ (location, occupant) tuples]
-        from attack piece to the other general """
-
-        defending_pieces = self.get_pieces(player)
-        target = attack_piece.get_pos()
-
-        # See if one of player's pieces can block this path
-        # by occupying any position along path, including capture of the attack_piece at its current location
-        for piece in defending_pieces:
-            for pos, occupant in path:
-                if piece.is_legal(pos):             # this piece can block or capture
-                    return (piece.get_pos(), pos)   # return this piece's position and the position of block or capture
-
-        # If attack piece is a cannon, there is the additional possibility of moving the piece that
-        # acts as shield, if it belongs to player
-        for pos, occupant in path:
-            if occupant.get_side() == player:
-                return True
-
-        # we have exhausted all possibilities of block, capture, or disabling the attack_piece. Return False.
+    def is_in_checkmate(self, side):
+        """ returns True if this side's Player is in checkmate. Player is in checkmate if there is no one move that can
+        defend against all current checks"""
+        defender = self.get_player(side)
+        attacker = self.get_opponent(side)
+        defending_general = defender.get_general_pos()
+        attack_list = attacker.get_attacks(defending_general)
+        if not defender.defend_all_checks():
+            return True
         return False
 
     def make_move(self, from_pos, to_pos):

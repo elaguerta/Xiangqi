@@ -26,7 +26,8 @@ class SoldierPiece(Piece):
         one point after crossing river"""
 
         # check the conditions that are checked for all pieces
-        if not super().is_legal(to_pos):
+        try_path = super().is_legal(to_pos)
+        if not try_path:
             return False
 
         to_rank, to_file = self._board.get_loc_from_pos(to_pos)
