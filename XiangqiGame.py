@@ -52,14 +52,50 @@ class XiangqiGame():
         """
         # get the position of this player's general
         general_pos = self._board.get_general_pos(player)
-
-        # if there is a legal move from any opposing piece to general_pos, and it is opponent's turn, return True
-        if self._turn != player:
-            for piece in self._pieces:
-                if piece.get_side() != player and piece.is_legal(general_pos):
-                    return True
+        opponent = self.get_opponent(player)
+        opp_team = self.get_pieces(opponent)
+        # if there is a legal move from any opposing piece to general_pos, return True
+        for piece in opp_team:
+            if piece.is_legal(general_pos):
+                return True
 
         return False
+
+    def is_in_checkmate(self, player):
+        """ returns True if player is in checkmate. Player is in checkmate if there is no one move that can defend against
+        all current checks"""
+        pass
+
+    def defend_check(self, player, attack_piece, path):
+        """ returns a (from_pos, to_pos) move that would defend player from attack piece. Returns False if no such move.
+        Attack_piece is a piece that is placing the other general in check.
+        Path is the ordered list of [ (location, occupant) tuples]
+        from attack piece to the other general """
+
+        defending_pieces = self.get_pieces(player)
+        target = attack_piece.get_pos()
+
+        # See if one of player's pieces can block this path
+        # by occupying any position along path, including capture of the attack_piece at its current location
+        for piece in defending_pieces:
+            for pos, occupant in path:
+                if piece.is_legal(pos):             # this piece can block or capture
+                    return (piece.get_pos(), pos)   # return this piece's position and the position of block or capture
+
+        # If attack piece is a cannon, there is the additional possibility of moving the piece that
+        # acts as shield, if it belongs to player
+        for pos, occupant in path:
+            if occupant.get_side() == player:
+                return True
+
+        # we have exhausted all possibilities of block, capture, or disabling the attack_piece. Return False.
+        return False
+
+
+
+
+
+
 
 
     def make_move(self, from_pos, to_pos):
@@ -100,6 +136,16 @@ class XiangqiGame():
         self.update_game_state()
         return True
 
+    def get_pieces(self, player):
+        """ returns subset of self._pieces that are on the side of player"""
+        return {piece for piece in self._pieces if piece._side == player}
+
+    def get_opponent(self, player):
+        """ returns the opponent of player"""
+        if player == 'red':
+            return 'black'
+        return 'red'
+
     def update_game_state(self):
         """ checks if there is a checkmate or stalemate and updates game state if so. Otherwise,
          does nothing """
@@ -110,5 +156,6 @@ class XiangqiGame():
         self._turn, self._next_turn = self._next_turn, self._turn
 
     def out_of_range(self, pos):
+        """returns True if pos is beyond the limits of the board"""
         rank, file = pos[1:], pos[0]
         return rank not in self._board.get_ranks() or file not in self._board.get_files()

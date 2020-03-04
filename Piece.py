@@ -80,3 +80,9 @@ class Piece:
     def get_side(self):
         return self._side
 
+    def get_pos(self):
+        return self._pos
+
+    def get_jumps(self):
+        return self._jumps
+

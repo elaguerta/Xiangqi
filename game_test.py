@@ -71,9 +71,9 @@ class TestGame(unittest.TestCase):
         board.clear_pos('e4')
         board.clear_piece(e4)
 
-        # now black should be in check from flying general
+        # now both sides should be in check from flying general
         self.assertEqual(game.is_in_check('black'), True)
-        self.assertEqual(game.is_in_check('red'), False)
+        self.assertEqual(game.is_in_check('red'), True)
         red_gen = board.get_piece_from_pos('e1')
         self.assertEqual(red_gen.is_flying_general('e10'), True)
 
