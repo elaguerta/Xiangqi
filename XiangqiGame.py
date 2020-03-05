@@ -35,6 +35,9 @@ class XiangqiGame():
             return True
         return False
 
+    def is_in_stalemate(self, side):
+        pass
+
     def is_in_checkmate(self, side):
         """ returns True if this side's Player is in checkmate. Player is in checkmate if there is no one move that can
         defend against all current checks"""
@@ -42,7 +45,7 @@ class XiangqiGame():
         attacker = self.get_opponent(side)
         defending_general = defender.get_general_pos()
         attack_list = attacker.get_attacks(defending_general)
-        if not defender.defend_all_checks():
+        if not defender.defend_all_checks(attack_list):
             return True
         return False
 
@@ -76,10 +79,6 @@ class XiangqiGame():
         self.update_turn()
         self.update_game_state()
         return True
-
-    def get_pieces(self, player):
-        """ returns subset of self._pieces that are on the side of player"""
-        return {piece for piece in self._pieces if piece._side == player}
 
     def get_opponent(self, player):
         """ returns the opponent of player"""

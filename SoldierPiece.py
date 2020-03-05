@@ -9,7 +9,7 @@ class SoldierPiece(Piece):
     def __init__(self, player, board, id_num):
         super().__init__(player, board)
         self._movement = 'ortho'  # ortho, diagonal, or L shaped
-        self._max_path_length = 1
+        self._path_length = 1
         self._crossed_river = False
 
         # assign a position.

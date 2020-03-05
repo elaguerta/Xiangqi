@@ -1,3 +1,4 @@
+from Piece import Piece
 from GeneralPiece import GeneralPiece
 from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
@@ -35,10 +36,13 @@ class Player():
         Attack_piece is a piece that is placing this Player's general in check. Path is the ordered list of
         [ (location, occupant) tuples] from attack piece to the other general """
         defense_moves = {}
-        target = attack_piece.get_pos()
 
-        # See if one of Player's pieces can block this attack
-        # by occupying any position along path, including capture of the attack_piece at its current location
+        # See if one of Player's pieces can capture attack_piece at its current location
+        for piece in self._pieces:
+            if piece.is_legal(attack_piece.get_pos()):
+                defense_moves.add((piece.get_pos(), attack_piece.get_pos()))
+
+        # See if one of Player's pieces can block this attack by occupying any position along path
         for piece in self._pieces:
             for pos, occupant in path:
                 if piece.is_legal(pos):             # this piece can block or capture
@@ -48,7 +52,7 @@ class Player():
         # called the 'screen'. If the screen piece belongs to Player, Player can defend against Cannon by
         # moving the 'screen' from the path
         for pos, occupant in path:
-            if occupant.get_side() == player:
+            if occupant in self._pieces:
                 # fix this later: need to add all possible legal moves for screen piece away from path
                 # for now, save a tuple with from_position, 'screen piece' flag, and the path from the cannon
                 defense_moves.add((occupant.get_pos, 'screen_piece', path))
@@ -65,30 +69,31 @@ class Player():
         # subsequent set of defense moves until attackers list is exhausted
 
         attack_piece, path = attackers[0]
+        # returns a set of defense moves against the first attack in the list
         defense_moves = self.get_defense_moves(attack_piece, path)
+
 
         for index in range(1, len(attackers)):
             attack_piece, path = attackers[index]
+            # intersect the set of defense moves against this attack with the previous set
             defense_moves = defense_moves.intersection(self.get_defense_moves(attack_piece, path))
 
-        return defense_moves
-
-
-    def get_pieces(self):
-        return self._pieces
+        return defense_moves # defense moves contains the set of moves that can defend all checks in attackers list
 
     def get_general_pos(self):
         """ return the position of this player's general"""
         return self._general._pos
 
     def move(self, from_pos, to_pos):
-        piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos
+        piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos.
+
         if not piece:                                   # the from position is empty
             return False
-        if piece.get_side() != self._side:             # the piece on the from position does not belong to this player
-            return False
-        # tell the piece to attempt the move, return the result
 
+        if piece not in self._pieces:             # the piece on the from position does not belong to this player
+            return False
+
+        # tell the piece to attempt the move, return the result
         return piece.move(to_pos)
 
     def get_attacks(self, opp_general_pos):
