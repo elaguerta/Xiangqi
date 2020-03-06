@@ -11,7 +11,7 @@ class XiangqiGame():
 
     def get_game_state(self):
         """ Returns 'UNFINISHED', 'RED_WON', or 'BLACK_WON" """
-        pass
+        return self._game_state
 
     def get_player(self, player):
         """return the Player represented by player string - 'red' or 'black'"""
@@ -45,8 +45,9 @@ class XiangqiGame():
         attacker = self.get_opponent(side)
         defending_general = defender.get_general_pos()
         attack_list = attacker.get_attacks(defending_general)
-        if not defender.defend_all_checks(attack_list):
-            return True
+        if attack_list:
+            if not defender.defend_all_checks(attack_list):
+                return True
         return False
 
     def make_move(self, from_pos, to_pos):
@@ -90,7 +91,25 @@ class XiangqiGame():
     def update_game_state(self):
         """ checks if there is a checkmate or stalemate and updates game state if so. Otherwise,
          does nothing """
-        pass
+
+        # check checkmates first
+        if self.is_in_checkmate('red'):
+            self._game_state = 'BLACK_WON'
+            return
+        elif self.is_in_checkmate('black'):
+            self._game_state = 'RED_WON'
+            return
+
+        #check stalemates next
+        elif self.is_in_stalemate('red'):
+            self._game_state = 'BLACK_WON'
+            return
+        elif self.is_in_stalemate('black'):
+            self._game_state = 'RED_WON'
+            return
+        else:
+            # no endgame condition, just return
+            return
 
     def update_turn(self):
         """ sets turn variables to next turn """

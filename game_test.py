@@ -102,18 +102,21 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('c5', 'b5'), True) #black moves horizontally
 
 
-def test_game_state(self):
+    def test_game_state(self):
         pass
         # if this move would win the game, update game state and return true
 
 
-    # def test_example(self):
-    #     """ Example given in problem statement. """
-    #     game = XiangqiGame()
-    #     move_result = game.make_move('c1', 'e3')
-    #     black_in_check = game.is_in_check('black')
-    #     game.make_move('e7', 'e6')
-    #     state = game.get_game_state()
+    def test_example(self):
+        """ Example given in problem statement. """
+        game = XiangqiGame()
+        move_result = game.make_move('c1', 'e3')
+        game._board.display_board()
+        black_in_check = game.is_in_check('black')
+        print(black_in_check)
+        game.make_move('e7', 'e6')
+        state = game.get_game_state()
+        print(state)
 
 
 
