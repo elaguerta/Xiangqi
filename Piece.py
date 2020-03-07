@@ -16,12 +16,14 @@ class Piece:
         Do not include current location in the list. Last item is to_pos.
         False if no such path along bearing"""
 
-        to_rank, to_file = (to_pos[1:], to_pos[0])
-        from_rank, from_file = (self._pos[1:], self._pos[0])
-        if self._movement == 'ortho' and (to_rank != from_rank and to_file != from_file):
-            return False
+        try_ortho = self._board.get_ortho_path(self._pos, to_pos)
+        try_diag = self._board.get_diagonal_path(self._pos, to_pos)
+        if self._movement == 'ortho' and try_ortho:
+            return try_ortho
+        elif self._movement == 'diagonal' and try_diag:
+            return try_diag
         else:
-            return self._board.get_ortho_path(self._pos, to_pos)
+            return False
 
     def num_jumps(self, path):
         """ returns number of pieces that would be jumped along path"""

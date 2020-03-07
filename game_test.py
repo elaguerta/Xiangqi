@@ -9,6 +9,33 @@ from ChariotPiece import ChariotPiece
 
 class TestGame(unittest.TestCase):
 
+    def test_elephant(self):
+        """ test elephant movement pattern"""
+        game = XiangqiGame()
+
+        #test legal moves
+        self.assertEqual(game.make_move('g1', 'i3'), True) # red elephant moves 2 diagonal
+        self.assertEqual(game.make_move('c10', 'e8'), True) # black elephant moves 2 diagonal
+        self.assertEqual(game.make_move('i3','g5' ), True) # red elephant moves 2 diagonal
+        self.assertEqual(game.make_move('e8', 'g6'), True) # black elephant moves 2 diagonal
+
+        # move back and forth, legally
+        self.assertEqual(game.make_move('g5', 'i3'), True)  # red elephant moves 2 diagonal
+        self.assertEqual(game.make_move('g6', 'e8'), True)  # black elephant moves 2 diagonal
+        self.assertEqual(game.make_move('i3', 'g5'), True)  # red elephant moves 2 diagonal
+        self.assertEqual(game.make_move('e8', 'g6'), True)  # black elephant moves 2 diagonal
+
+        # try to cross river
+        self.assertEqual(game.make_move('g5','e7'), False) # red tries to capture at e7 but can't cross river
+        self.assertEqual(game.make_move('g6', 'i4'), False)  # black tries to capture at i4 but can't cross river
+
+        # try to move ortho
+        self.assertEqual(game.make_move('g5', 'g3'), False)
+
+        # try to move more than two spaces
+        self.assertEqual(game.make_move('g6', 'd9'), False)
+
+
     def test_piece(self):
         """ test basic piece logic on chariot piece"""
         game = XiangqiGame()
@@ -27,8 +54,6 @@ class TestGame(unittest.TestCase):
         # move black chariot in "opposite" directions
         game.update_turn()          # make it black's turn
         self.assertEqual(game.make_move('a10', 'a8'), True)
-        game.update_turn()
-        self.assertEqual(game.make_move('i10', 'g10'), True)
 
     def test_move(self):
         """ tests move logic at game level"""
@@ -110,13 +135,10 @@ class TestGame(unittest.TestCase):
     def test_example(self):
         """ Example given in problem statement. """
         game = XiangqiGame()
-        move_result = game.make_move('c1', 'e3')
-        game._board.display_board()
-        black_in_check = game.is_in_check('black')
-        print(black_in_check)
-        game.make_move('e7', 'e6')
-        state = game.get_game_state()
-        print(state)
+        self.assertEqual(game.make_move('c1', 'e3'), True)
+        self.assertEqual(game.is_in_check('black'), False)
+        self.assertEqual(game.make_move('e7', 'e6'), True)
+        self.assertEqual(game.get_game_state(), 'UNFINISHED')
 
 
 

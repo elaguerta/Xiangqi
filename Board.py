@@ -99,8 +99,43 @@ class Board:
         """ returns the position of the general on side of player"""
         return self._piece_state[ player[0] + "Ge"]
 
+    def get_diagonal_path(self, from_pos, to_pos):
+        """ ordered list of [ (location, occupant) tuples] from from_pos to to_pos along diagonal.
+                Do not include current location in the list. Last item is to_pos. """
+        to_rank, to_file = self.get_loc_from_pos(to_pos)
+        from_rank, from_file = self.get_loc_from_pos(from_pos)
+        path = []
+
+        if from_rank == to_rank or from_file == to_file: # return empty path if positions are ortho to each other
+            return path
+
+        rank_diff = to_rank - from_rank
+        file_diff = to_file - from_file
+        if abs(rank_diff) != abs(file_diff): # return empty path if horizontal distance does not equal vertical distance
+            return path
+
+        flip_file = file_diff < 0
+        flip_rank = rank_diff < 0
+
+        if flip_rank:
+            rank_range = range(from_rank - 1, to_rank - 1, - 1)
+        else:
+            rank_range = range(from_rank + 1, to_rank + 1)
+
+        if flip_file:
+            file_range = range(from_file -1, to_file - 1, -1)
+        else:
+            file_range = range(from_file + 1, to_file + 1)
+
+        diag_positions = zip(rank_range, file_range)
+        for rank, file in diag_positions:
+            pos = self.get_pos_from_loc((rank,file))
+            path.append((pos, self.get_piece_from_pos(pos)))
+
+        return path
+
     def get_ortho_path(self, from_pos, to_pos):
-        """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along ortho.
+        """ ordered list of [ (location, occupant) tuples] from from_pos to to_pos along ortho.
         Do not include current location in the list. Last item is to_pos. """
 
         to_rank, to_file = self.get_loc_from_pos(to_pos)
