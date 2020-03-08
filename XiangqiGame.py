@@ -37,7 +37,11 @@ class XiangqiGame():
         return False
 
     def is_in_stalemate(self, side):
-        pass
+        player = self.get_player(side)
+        opponent = self.get_opponent(side)
+        if not player.has_available_move(opponent):
+            return True
+        return False
 
     def is_in_checkmate(self, side):
         """ returns True if this side's Player is in checkmate. Player is in checkmate if there is no one move that can
@@ -95,26 +99,21 @@ class XiangqiGame():
 
     def update_game_state(self):
         """ checks if there is a checkmate or stalemate and updates game state if so. Otherwise,
-         does nothing """
-
-        # check checkmates first
-        if self.is_in_checkmate('red'):
-            self._game_state = 'BLACK_WON'
-            return
-        elif self.is_in_checkmate('black'):
-            self._game_state = 'RED_WON'
-            return
-
-        #check stalemates next
-        elif self.is_in_stalemate('red'):
-            self._game_state = 'BLACK_WON'
-            return
-        elif self.is_in_stalemate('black'):
-            self._game_state = 'RED_WON'
-            return
+         does nothing. Returns True """
+        if self._turn == 'red':
+            next_turn = 'black'
         else:
-            # no endgame condition, just return
-            return
+            next_turn = 'red'
+
+        # check if most recent move has put the next player in checkmate or stalemate
+        if self.is_in_checkmate(next_turn) or self.is_in_stalemate(next_turn):
+            # update endgame conditions
+            if self._turn == 'red':
+                self._game_state = 'BLACK_WON'
+            else:
+                self._game_state = 'RED_WON'
+        return True
+
 
     def update_turn(self):
         """ sets turn variables to next turn """

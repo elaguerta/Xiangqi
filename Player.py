@@ -96,6 +96,7 @@ class Player():
         resulting_checks = opp.get_attacks(self.get_general_pos(), look_ahead_board)
         if resulting_checks:
             return True
+
         return False
 
     def get_general_pos(self):
@@ -130,4 +131,19 @@ class Player():
                 attackers.append((piece,path))
         return attackers
 
+    def has_available_move(self, opponent, board = None):
+        """ returns True if this player has at least one legal move"""
+        if not board:
+            board = self._board
+
+        possible_moves = board.get_available_positions(self._side)
+        for piece in self._pieces:
+            if piece.get_pos() is not None: # if piece has not been captured
+                for pos in possible_moves:  # search through possible moves
+                    # if piece can legally move to pos and and would not put self in check, Player
+                    # has at least one available move. Return the move.
+                    if piece.is_legal(pos) and not self.puts_self_in_check(piece, pos, opponent):
+                        return (piece.get_pos(), pos)
+        # if no such move, return False
+        return False
 
