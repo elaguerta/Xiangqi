@@ -4,8 +4,6 @@
 
 import unittest
 from XiangqiGame import XiangqiGame
-from Board import Board
-from ChariotPiece import ChariotPiece
 
 class TestGame(unittest.TestCase):
 
@@ -18,13 +16,13 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('c10', 'e8'), True) # black elephant moves 2 diagonal
         self.assertEqual(game.make_move('i3','g5' ), True) # red elephant moves 2 diagonal
         self.assertEqual(game.make_move('e8', 'g6'), True) # black elephant moves 2 diagonal
-
+    #
         # move back and forth, legally
         self.assertEqual(game.make_move('g5', 'i3'), True)  # red elephant moves 2 diagonal
         self.assertEqual(game.make_move('g6', 'e8'), True)  # black elephant moves 2 diagonal
         self.assertEqual(game.make_move('i3', 'g5'), True)  # red elephant moves 2 diagonal
         self.assertEqual(game.make_move('e8', 'g6'), True)  # black elephant moves 2 diagonal
-
+    #
         # try to cross river
         self.assertEqual(game.make_move('g5','e7'), False) # red tries to capture at e7 but can't cross river
         self.assertEqual(game.make_move('g6', 'i4'), False)  # black tries to capture at i4 but can't cross river
@@ -72,7 +70,7 @@ class TestGame(unittest.TestCase):
 
         # if move is successful, update whose turn it is and return true
         game.make_move('a1', 'a2')
-        self.assertEqual(game._turn, 'black')
+        # self.assertEqual(game._turn, 'black')
 
     def test_general(self):
         """ tests basic rules limiting general's movement"""
@@ -139,9 +137,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.is_in_check('black'), False)
         self.assertEqual(game.make_move('e7', 'e6'), True)
         self.assertEqual(game.get_game_state(), 'UNFINISHED')
-
-
-
 
 if __name__ == "__main__":
     unittest.main()

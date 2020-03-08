@@ -20,18 +20,20 @@ class SoldierPiece(Piece):
     def __repr__(self):
         return self._side[0] + "So" + str(self._id)
 
-    def is_legal(self, to_pos):
+    def is_legal(self, to_pos, board = None):
         """ calls super().is_legal and then checks the additional restrictions on the soldier's movement:
         cannot retreat, can move and capture by advancing one point, can move and capture horizontally by
         one point after crossing river"""
 
         # check the conditions that are checked for all pieces
-        try_path = super().is_legal(to_pos)
+        if not board:
+            board = self._board
+        try_path = super().is_legal(to_pos, board)
         if not try_path:
             return False
 
-        to_rank, to_file = self._board.get_loc_from_pos(to_pos)
-        from_rank, from_file = self._board.get_loc_from_pos(self._pos)
+        to_rank, to_file = board.get_loc_from_pos(to_pos)
+        from_rank, from_file = board.get_loc_from_pos(self._pos)
 
         # if the move is a retreat, return False
         # red retreats along the same file from a higher rank to a lower rank
@@ -51,8 +53,10 @@ class SoldierPiece(Piece):
 
 
 
-    def move(self, to_pos):
-        move_result = super().move(to_pos)        # move as usual
+    def move(self, to_pos, board = None):
+        if not board:
+            board = self._board
+        move_result = super().move(to_pos, board)        # move as usual
 
         # if red makes it to 6, or black makes it to 5, river was crossed. Set self._crossed_river to True
         if self._side == 'red' and to_pos[1:] == '6':

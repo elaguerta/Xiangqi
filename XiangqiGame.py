@@ -1,5 +1,6 @@
 from Board import Board
 from Player import Player
+from Piece import Piece
 
 class XiangqiGame():
     def __init__(self):
@@ -65,18 +66,22 @@ class XiangqiGame():
         update whose turn it is, and return True.
 
         """
+        turn_player = self.get_player(self._turn)
+        opp = self.get_opponent(self._turn)
         if self._game_state != 'UNFINISHED':    # if the game has already been won, return False
             return False
         if from_pos == to_pos:                  # do not allow a move that does not change the board state
             return False
         if self.out_of_range(from_pos) or self.out_of_range(to_pos):    # validate that positions are within range
             return False
-        try_move = self.get_player(self._turn).move(from_pos, to_pos)     # ask this turn's Player to attempt the move
+        try_move = turn_player.move(from_pos, to_pos, opp)     # ask this turn's Player to attempt the move
 
         if not try_move:                            # if not successful, return False
             return False
 
         # If we got to this point, move succeeded, update the turn, update the game state, and return True
+        if isinstance(try_move, Piece):         # if the move resulted in a capture
+            try_move.set_pos(None)              # update captive's position to None
         self.update_turn()
         self.update_game_state()
         return True

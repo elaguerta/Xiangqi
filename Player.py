@@ -2,6 +2,7 @@ from GeneralPiece import GeneralPiece
 from ElephantPiece import ElephantPiece
 from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
+import copy
 
 class Player():
 
@@ -84,11 +85,24 @@ class Player():
 
         return defense_moves # defense moves contains the set of moves that can defend all checks in attackers list
 
+    def puts_self_in_check(self, piece, to_pos ,opp):
+        """ returns True of a move of piece to to_pos would put self in check"""
+        look_ahead_board = copy.deepcopy(self._board)        # make a copy of the current board
+        look_ahead_piece = copy.deepcopy(piece)
+        try_move = look_ahead_piece.move(to_pos, look_ahead_board) #ask the piece to try the move on the copy
+        if not try_move:
+            return False
+        # ask the opponent to examine look ahead board for attacks on general
+        resulting_checks = opp.get_attacks(self.get_general_pos(), look_ahead_board)
+        if resulting_checks:
+            return True
+        return False
+
     def get_general_pos(self):
         """ return the position of this player's general"""
         return self._general._pos
 
-    def move(self, from_pos, to_pos):
+    def move(self, from_pos, to_pos, opp):
         piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos.
 
         if not piece:                                   # the from position is empty
@@ -97,17 +111,22 @@ class Player():
         if piece not in self._pieces:             # the piece on the from position does not belong to this player
             return False
 
+        if self.puts_self_in_check(piece, to_pos, opp): # the move would result in a check on this player
+            print("puts self in check")
+            return False
         # tell the piece to attempt the move, return the result
         return piece.move(to_pos)
 
-    def get_attacks(self, opp_general_pos):
+    def get_attacks(self, opp_general_pos, board = None):
         """returns a list of (attacker, path) tuples
          for any piece of this Player's that has a shot at the opposing general's position. Returns an empty list if
          no such attack."""
+        if not board:
+            board = self._board
         attackers = []
         for piece in self._pieces:
-            if piece.is_legal(opp_general_pos):
-                path = piece.get_path(opp_general_pos)
+            if piece.get_pos() is not None and piece.is_legal(opp_general_pos, board):
+                path = piece.get_path(opp_general_pos, board)
                 attackers.append((piece,path))
         return attackers
 

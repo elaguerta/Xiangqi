@@ -131,7 +131,6 @@ class Board:
         for rank, file in diag_positions:
             pos = self.get_pos_from_loc((rank,file))
             path.append((pos, self.get_piece_from_pos(pos)))
-
         return path
 
     def get_ortho_path(self, from_pos, to_pos):
