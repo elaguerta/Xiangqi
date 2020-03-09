@@ -3,6 +3,7 @@ from ElephantPiece import ElephantPiece
 from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
 from AdvisorPiece import AdvisorPiece
+from HorsePiece import HorsePiece
 
 class Player():
 
@@ -23,6 +24,10 @@ class Player():
         # initialize 2 Elephant pieces
         self._pieces.add(ElephantPiece(side, board, 1))
         self._pieces.add(ElephantPiece(side, board, 2))
+
+        # initialize 2 Horse pieces
+        self._pieces.add(HorsePiece(side, board, 1))
+        self._pieces.add(HorsePiece(side, board, 2))
 
         # initialize 2 chariot pieces
         self._pieces.add(ChariotPiece(side, board, 1))
@@ -117,7 +122,6 @@ class Player():
             return False
 
         if self.puts_self_in_check(piece, to_pos, opp): # the move would result in a check on this player
-            print("puts self in check")
             return False
         # tell the piece to attempt the move, return the result
         try_move = piece.move(to_pos)

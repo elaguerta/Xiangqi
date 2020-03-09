@@ -99,6 +99,40 @@ class Board:
         """ returns the position of the general on side of player"""
         return self._piece_state[ player[0] + "Ge"]
 
+    def get_L_path(self, from_pos, to_pos):
+        """ ordered list of [ (position, occupant) tuples] from from_pos to to_pos along L path.
+                        Do not include current location in the list. Last item is to_pos. """
+        to_rank, to_file = self.get_loc_from_pos(to_pos)
+        from_rank, from_file = self.get_loc_from_pos(from_pos)
+        path = []
+
+        # generate the max 8 possible L-path destinations from the start location
+        # the 4 maximum intermediate locations are one unit in every ortho direction
+        loc_diffs_int = [(-1,-1), (-1,1), (1,-1), (1,1)]# permute one unit difference in rank and file directions
+        # create a list of possible intermediate locations
+        int_locs = [(from_rank + rank_diff, from_file + file_diff) for rank_diff, file_diff in loc_diffs_int]
+        # filter any locs that are out of range
+        int_locs = [(rank, file) for rank,file in int_locs if 0 <= rank < len(self._ranks) and 0 <= file < len(self._files)]
+
+        # a valid L path will continue along ortho trajectory set by intermediate location
+        # From start to intermediate, and from intermediate to destination, both moves increase rank or file
+        # by one unit. Find the corresponding intermediate position,  if any, to to_pos
+        int_pos = None
+        for int_rank, int_file in int_locs:
+            if from_rank - int_rank == int_rank - to_rank: # both ranks increase or decrease by 1 unit
+                int_pos = self.get_pos_from_loc((int_rank, int_file))
+            elif from_file - int_file == int_file - to_file: # both files increase or decrease by 1 unit
+                int_pos = self.get_pos_from_loc((int_rank, int_file))
+
+        if int_pos:
+            try_dest = self.get_diagonal_path(int_pos, to_pos) # find a valid diagonal from intermedate to destination
+
+        if int_pos and try_dest:
+            path.append( (int_pos, self.get_piece_from_pos(int_pos)) )
+            path.append(try_dest)
+
+        return path
+
     def get_diagonal_path(self, from_pos, to_pos):
         """ ordered list of [ (location, occupant) tuples] from from_pos to to_pos along diagonal.
                 Do not include current location in the list. Last item is to_pos. """

@@ -18,6 +18,9 @@ class Piece:
 
         try_ortho = self._board.get_ortho_path(self._pos, to_pos)
         try_diag = self._board.get_diagonal_path(self._pos, to_pos)
+        try_L_shaped = self._board.get_L_path(self._pos, to_pos)
+        if self._movement == 'L-shaped' and try_L_shaped:
+            return try_L_shaped
         if self._movement == 'ortho' and try_ortho:
             return try_ortho
         elif self._movement == 'diagonal' and try_diag:

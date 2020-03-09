@@ -6,10 +6,45 @@ import unittest
 from XiangqiGame import XiangqiGame
 
 class TestGame(unittest.TestCase):
+    def test_horse(self):
+        """ test horse movement pattern """
+        # make legal moves
+
+        # try to move when blocked
+
+        # try to make illegal moves
+        pass
+
+    def test_general(self):
+        """ tests basic rules limiting general's movement"""
+        game = XiangqiGame()
+        # test basic movement forward and to both sides
+        self.assertEqual(game.make_move('e1', 'e2'), True)  # move red general forward
+        self.assertEqual(game.make_move('e10', 'e9'), True)  # move black general forward
+        self.assertEqual(game.make_move('e2', 'f2'), True)  # move red general east
+        self.assertEqual(game.make_move('e9', 'd9'), True)  # move black general west
+        self.assertEqual(game.make_move('f2', 'g2'), False)  # try to leave castle, should return False
+        self.assertEqual(game.make_move('d9', 'c9'), False)
+
+        # put player in check using flying general
+        game = XiangqiGame()
+        board = game._board
+        e7 = board.get_piece_from_pos('e7')  # remove black soldier on e7
+        board.clear_pos('e7')
+        board.clear_piece(e7)
+        e4 = board.get_piece_from_pos('e4')  # remove red soldier on e4
+        board.clear_pos('e4')
+        board.clear_piece(e4)
+
+        # now both sides should be in check from flying general
+        self.assertEqual(game.is_in_check('black'), True)
+        self.assertEqual(game.is_in_check('red'), True)
+        red_gen = board.get_piece_from_pos('e1')
+        self.assertEqual(red_gen.is_flying_general('e10'), True)
+
     def test_advisor(self):
         """ test advisor movement pattern"""
         game = XiangqiGame()
-        game._board.display_board()
 
         # make legal moves
         self.assertEqual(game.make_move('d1', 'e2'), True) # move red advisor within castle
@@ -94,32 +129,7 @@ class TestGame(unittest.TestCase):
         game.make_move('a1', 'a2')
         # self.assertEqual(game._turn, 'black')
 
-    def test_general(self):
-        """ tests basic rules limiting general's movement"""
-        game = XiangqiGame()
-        # test basic movement forward and to both sides
-        self.assertEqual(game.make_move('e1', 'e2'), True)         # move red general forward
-        self.assertEqual(game.make_move('e10', 'e9'), True)          # move black general forward
-        self.assertEqual(game.make_move('e2', 'f2'), True)          # move red general east
-        self.assertEqual(game.make_move('e9', 'd9'), True)          # move black general west
-        self.assertEqual(game.make_move('f2', 'g2'), False)         # try to leave castle, should return False
-        self.assertEqual(game.make_move('d9', 'c9'), False)
 
-        # put player in check using flying general
-        game = XiangqiGame()
-        board = game._board
-        e7 = board.get_piece_from_pos('e7') # remove black soldier on e7
-        board.clear_pos('e7')
-        board.clear_piece(e7)
-        e4 = board.get_piece_from_pos('e4')  # remove red soldier on e4
-        board.clear_pos('e4')
-        board.clear_piece(e4)
-
-        # now both sides should be in check from flying general
-        self.assertEqual(game.is_in_check('black'), True)
-        self.assertEqual(game.is_in_check('red'), True)
-        red_gen = board.get_piece_from_pos('e1')
-        self.assertEqual(red_gen.is_flying_general('e10'), True)
 
     def test_soldier(self):
         """ tests basic rules limiting soldier's movement"""
