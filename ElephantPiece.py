@@ -22,7 +22,5 @@ class ElephantPiece(Piece):
     def __repr__(self):
         return self._side[0] + "El" + str(self._id)
 
-    def is_legal(self, to_pos, board = None):
-        if not board:
-            board = self._board
-        return super().is_legal(to_pos, board) and to_pos[1:] in ElephantPiece.legal_ranks[self._side]
+    def is_legal(self, to_pos):
+        return super().is_legal(to_pos) and to_pos[1:] in ElephantPiece.legal_ranks[self._side]

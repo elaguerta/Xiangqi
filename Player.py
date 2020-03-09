@@ -127,17 +127,15 @@ class Player():
             board = self._board
         attackers = []
         for piece in self._pieces:
-            if piece.get_pos() is not None and piece.is_legal(opp_general_pos, board):
-                path = piece.get_path(opp_general_pos, board)
+            if piece.get_pos() is not None and piece.is_legal(opp_general_pos):
+                path = piece.get_path(opp_general_pos)
                 attackers.append((piece,path))
         return attackers
 
-    def has_available_move(self, opponent, board = None):
+    def has_available_move(self, opponent):
         """ returns True if this player has at least one legal move"""
-        if not board:
-            board = self._board
 
-        possible_moves = board.get_available_positions(self._side)
+        possible_moves = self._board.get_available_positions(self._side)
         for piece in self._pieces:
             if piece.get_pos() is not None: # if piece has not been captured
                 for pos in possible_moves:  # search through possible moves
