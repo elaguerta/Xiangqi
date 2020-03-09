@@ -108,7 +108,7 @@ class Board:
 
         # generate the max 8 possible L-path destinations from the start location
         # the 4 maximum intermediate locations are one unit in every ortho direction
-        loc_diffs_int = [(-1,-1), (-1,1), (1,-1), (1,1)]# permute one unit difference in rank and file directions
+        loc_diffs_int = [(0,-1), (0,1), (1,0), (-1,0)]# permute one unit difference in rank and file directions
         # create a list of possible intermediate locations
         int_locs = [(from_rank + rank_diff, from_file + file_diff) for rank_diff, file_diff in loc_diffs_int]
         # filter any locs that are out of range

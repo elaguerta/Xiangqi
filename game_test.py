@@ -8,12 +8,23 @@ from XiangqiGame import XiangqiGame
 class TestGame(unittest.TestCase):
     def test_horse(self):
         """ test horse movement pattern """
+        game = XiangqiGame()
+
         # make legal moves
+        game._board.display_board()
+        self.assertEqual(game.make_move('h1', 'g3'), True)  # move red horse forward
+        self.assertEqual(game.make_move('b10', 'a8'), True)  # move black horse forward
 
         # try to move when blocked
+        self.assertEqual(game.make_move('g3', 'f5'), False)  # try to move red horse
+        game.update_turn()
+        self.assertEqual(game.make_move('a8', 'b6'), False)  #try to move black horse
 
-        # try to make illegal moves
-        pass
+        # try to move in non L pattern
+        game.update_turn()
+        self.assertEqual(game.make_move('b1', 'd3'), False)  # try to move red horse diagonal
+        game.update_turn()
+        self.assertEqual(game.make_move('h10', 'h9'), False)  # try to move black horse ortho
 
     def test_general(self):
         """ tests basic rules limiting general's movement"""
@@ -24,6 +35,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('e2', 'f2'), True)  # move red general east
         self.assertEqual(game.make_move('e9', 'd9'), True)  # move black general west
         self.assertEqual(game.make_move('f2', 'g2'), False)  # try to leave castle, should return False
+        game.update_turn()
         self.assertEqual(game.make_move('d9', 'c9'), False)
 
         # put player in check using flying general
@@ -54,14 +66,19 @@ class TestGame(unittest.TestCase):
 
         # try to move more than 1 position
         self.assertEqual(game.make_move('d1', 'f3'), False)  # move red advisor within castle, 2 spots
+        game.update_turn()
         self.assertEqual(game.make_move('d10', 'f8'), False)  # move black advisor within castle, 2 spots
 
         # try to move outside castle
+        game.update_turn()
         self.assertEqual(game.make_move('f1', 'h3'), False)  # move red advisor outside castle, 1 spots
+        game.update_turn()
         self.assertEqual(game.make_move('f10', 'h8'), False)  # move black advisor outside castle, 1 spots
 
         # try to move ortho
+        game.update_turn()
         self.assertEqual(game.make_move('f1', 'f2'), False)  # move red advisor ortho, 1 spot
+        game.update_turn()
         self.assertEqual(game.make_move('f10', 'f9'), False)  # move black advisor ortho, 1 spot
 
     def test_elephant(self):
@@ -82,12 +99,15 @@ class TestGame(unittest.TestCase):
     #
         # try to cross river
         self.assertEqual(game.make_move('g5','e7'), False) # red tries to capture at e7 but can't cross river
+        game.update_turn()
         self.assertEqual(game.make_move('g6', 'i4'), False)  # black tries to capture at i4 but can't cross river
 
         # try to move ortho
+        game.update_turn()
         self.assertEqual(game.make_move('g5', 'g3'), False)
 
         # try to move more than two spaces
+        game.update_turn()
         self.assertEqual(game.make_move('g6', 'd9'), False)
 
 
@@ -137,20 +157,20 @@ class TestGame(unittest.TestCase):
         board = game._board
 
         # move by advancing one point
-        self.assertEqual(game.make_move('e4', 'e5'), True)
-        self.assertEqual(game.make_move('e7', 'e6'), True)
+        self.assertEqual(game.make_move('e4', 'e5'), True) # red moves
+        self.assertEqual(game.make_move('e7', 'e6'), True) # black moves
 
         #capture by advancing one point
-        captive = board.get_piece_from_pos('e6')  # black soldier
+        captive = board.get_piece_from_pos('e6')  # get black soldier
         self.assertEqual(game.make_move('e5', 'e6'), True) # red captures black
-        self.assertEqual(str(captive)[0:-1], 'bSo')
+        self.assertEqual(str(captive)[0:-1], 'bSo') # confirm captive
 
 
         # try to move horizontally having not crossed river
         self.assertEqual(game.make_move('c7', 'b7'), False) # black attempts move
 
         # move horizontally after crossing river
-        game.make_move('c7', 'c6')
+        game.make_move('c7', 'c6')  # black moves
         game.update_turn()  # red turn
         game.make_move('c6', 'c5') # black crosses river
         game.update_turn() # red turn
