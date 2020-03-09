@@ -39,6 +39,10 @@ class Piece:
         """ returns current pos"""
         return self._pos
 
+    def set_pos(self, pos):
+        self._pos = pos
+        return True
+
     def is_legal(self, to_pos, board = None):
         """ returns a legal path for the piece to move to to_pos, given the current state of the board,
         false otherwise"""
@@ -80,24 +84,36 @@ class Piece:
             board.clear_pos(prev_pos)
         captive = board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
         if captive and captive.get_side() == self._side:    # if the to_pos is occupied by a friend, return False
+            print(captive)
             print("attacks friend")
             return False
         board.place_piece(self, to_pos)           # tell the board that to_pos is occupied by this piece
         self._pos = to_pos                              # update this piece's self.
         if captive:
             board.clear_piece(captive)                # clear the captured piece from the board
+            captive.set_pos(None)                       # captive sets its current position to None
             print("returning captive")
             return captive                                  # return the captive if any
         return True
 
+    def reverse_move(self, from_pos, to_pos, captive = None):
+        """ Reverses a move. Piece's current location must be to_pos. Puts captive, if any, on to_pos.
+        Puts piece on from_pos. Reversal is assumed to be legal."""
+        # restore captive, if any
+        if self.get_pos() != to_pos:
+            return False
+        if isinstance(captive, Piece):
+            self._board.place_piece(captive, to_pos)
+            captive.set_pos(to_pos)
+        else:
+            self._board.clear_pos(to_pos)
+        self._board.place_piece(self, from_pos)
+        self._pos = from_pos
+        return True
+
+
     def get_side(self):
         return self._side
-
-    def set_pos(self, pos):
-        self._pos = pos
-
-    def get_pos(self):
-        return self._pos
 
     def get_jumps(self):
         return self._jumps

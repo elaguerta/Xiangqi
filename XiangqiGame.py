@@ -84,8 +84,6 @@ class XiangqiGame():
             return False
 
         # If we got to this point, move succeeded, update the turn, update the game state, and return True
-        if isinstance(try_move, Piece):         # if the move resulted in a capture
-            try_move.set_pos(None)              # update captive's position to None
         self.update_turn()
         self.update_game_state()
         return True

@@ -2,7 +2,7 @@ from GeneralPiece import GeneralPiece
 from ElephantPiece import ElephantPiece
 from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
-import copy
+from Piece import Piece
 
 class Player():
 
@@ -87,16 +87,16 @@ class Player():
 
     def puts_self_in_check(self, piece, to_pos ,opp):
         """ returns True of a move of piece to to_pos would put self in check"""
-        look_ahead_board = copy.deepcopy(self._board)        # make a copy of the current board
-        look_ahead_piece = copy.deepcopy(piece)
-        try_move = look_ahead_piece.move(to_pos, look_ahead_board) #ask the piece to try the move on the copy
+        from_pos = piece.get_pos()  # save piece's previous position
+        try_move = piece.move(to_pos) #ask the piece to try the move
         if not try_move:
             return False
-        # ask the opponent to examine look ahead board for attacks on general
-        resulting_checks = opp.get_attacks(self.get_general_pos(), look_ahead_board)
-        if resulting_checks:
+        # ask the opponent to examine results of move for attacks on this Player's general
+        resulting_checks = opp.get_attacks(self.get_general_pos())
+        # now tell the piece to reverse the move. try_move will be assigned the captive, if any
+        piece.reverse_move(from_pos, to_pos, try_move)
+        if resulting_checks: # if there were any resulting checks, return True
             return True
-
         return False
 
     def get_general_pos(self):
@@ -116,7 +116,8 @@ class Player():
             print("puts self in check")
             return False
         # tell the piece to attempt the move, return the result
-        return piece.move(to_pos)
+        try_move = piece.move(to_pos)
+        return try_move
 
     def get_attacks(self, opp_general_pos, board = None):
         """returns a list of (attacker, path) tuples
