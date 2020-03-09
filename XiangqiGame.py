@@ -1,6 +1,5 @@
 from Board import Board
 from Player import Player
-from Piece import Piece
 
 class XiangqiGame():
     def __init__(self):

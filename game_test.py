@@ -6,6 +6,28 @@ import unittest
 from XiangqiGame import XiangqiGame
 
 class TestGame(unittest.TestCase):
+    def test_advisor(self):
+        """ test advisor movement pattern"""
+        game = XiangqiGame()
+        game._board.display_board()
+
+        # make legal moves
+        self.assertEqual(game.make_move('d1', 'e2'), True) # move red advisor within castle
+        self.assertEqual(game.make_move('d10', 'e9'), True) # move black advisor within castle
+        self.assertEqual(game.make_move('e2', 'd1'), True)  # move red advisor within castle
+        self.assertEqual(game.make_move('e9', 'd10'), True)  # move black advisor within castle
+
+        # try to move more than 1 position
+        self.assertEqual(game.make_move('d1', 'f3'), False)  # move red advisor within castle, 2 spots
+        self.assertEqual(game.make_move('d10', 'f8'), False)  # move black advisor within castle, 2 spots
+
+        # try to move outside castle
+        self.assertEqual(game.make_move('f1', 'h3'), False)  # move red advisor outside castle, 1 spots
+        self.assertEqual(game.make_move('f10', 'h8'), False)  # move black advisor outside castle, 1 spots
+
+        # try to move ortho
+        self.assertEqual(game.make_move('f1', 'f2'), False)  # move red advisor ortho, 1 spot
+        self.assertEqual(game.make_move('f10', 'f9'), False)  # move black advisor ortho, 1 spot
 
     def test_elephant(self):
         """ test elephant movement pattern"""

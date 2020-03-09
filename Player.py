@@ -2,7 +2,7 @@ from GeneralPiece import GeneralPiece
 from ElephantPiece import ElephantPiece
 from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
-from Piece import Piece
+from AdvisorPiece import AdvisorPiece
 
 class Player():
 
@@ -15,6 +15,10 @@ class Player():
         # Player's pieces.
         self._general = (GeneralPiece(side, board))
         self._pieces.add(self._general)
+
+        # initialize 2 Advisor Pieces
+        self._pieces.add(AdvisorPiece(side, board, 1))
+        self._pieces.add(AdvisorPiece(side, board, 2))
 
         # initialize 2 Elephant pieces
         self._pieces.add(ElephantPiece(side, board, 1))
