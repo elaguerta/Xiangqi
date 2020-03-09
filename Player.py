@@ -4,6 +4,7 @@ from ChariotPiece import ChariotPiece
 from SoldierPiece import SoldierPiece
 from AdvisorPiece import AdvisorPiece
 from HorsePiece import HorsePiece
+from CannonPiece import CannonPiece
 
 class Player():
 
@@ -32,6 +33,10 @@ class Player():
         # initialize 2 chariot pieces
         self._pieces.add(ChariotPiece(side, board, 1))
         self._pieces.add(ChariotPiece(side, board, 2))
+
+        # initialize 2 cannon pieces
+        self._pieces.add(CannonPiece(side, board, 1))
+        self._pieces.add(CannonPiece(side, board, 2))
 
         # initialize 5 soldiers
         self._pieces.add(SoldierPiece(side, board, 1))

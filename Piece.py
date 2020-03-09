@@ -59,10 +59,8 @@ class Piece:
             if len(try_path) > self._path_length:
                 return False
         # return False if pieces jumped along path do not obey the piece's restrictions
-
         if self.num_jumps(try_path) != self._jumps:
             return False
-
         return True
 
     def move(self, to_pos):
@@ -80,15 +78,12 @@ class Piece:
             self._board.clear_pos(prev_pos)
         captive = self._board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
         if captive and captive.get_side() == self._side:    # if the to_pos is occupied by a friend, return False
-            print(captive)
-            print("attacks friend")
             return False
         self._board.place_piece(self, to_pos)           # tell the board that to_pos is occupied by this piece
         self._pos = to_pos                              # update this piece's self.
         if captive:
             self._board.clear_piece(captive)                # clear the captured piece from the board
             captive.set_pos(None)                       # captive sets its current position to None
-            print("returning captive")
             return captive                                  # return the captive if any
         return True
 

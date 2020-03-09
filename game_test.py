@@ -6,12 +6,38 @@ import unittest
 from XiangqiGame import XiangqiGame
 
 class TestGame(unittest.TestCase):
+
+    def test_cannon(self):
+        """ test cannon movement pattern"""
+        game = XiangqiGame()
+        # make legal moves on both sides in all 4 directions
+        self.assertEqual(game.make_move('h3', 'h7'), True)  # move red cannon forward
+        self.assertEqual(game.make_move('b8', 'b5'), True) # move black cannon forward
+        self.assertEqual(game.make_move('b3', 'a3'), True)  # move red cannon west
+        self.assertEqual(game.make_move('b5', 'i5'), True)  # move black cannon east
+
+        # try to move diagonally
+        self.assertEqual(game.make_move('a3', 'c6'), False)  # try to move red cannon diagonal
+
+        # try to jump 1 piece without capturing
+        self.assertEqual(game.make_move('h8', 'h2'), False)  # try to move black cannon to jump
+
+        # try to capture without screen
+        self.assertEqual(game.make_move('h7', 'h8'), False) # try to move red cannon to capture without jump
+
+        # make legal capture with screen
+        game.update_turn()  # red turn
+        captive =  game._board.get_piece_from_pos('i1')
+        self.assertEqual(game.make_move('i5', 'i1'), True) # black cannon captures red chariot with 1 jump
+        self.assertEqual(captive.get_pos(), None)       # confirm capture
+        self.assertEqual(game._board._piece_state[str(captive)], None)
+
+
     def test_horse(self):
         """ test horse movement pattern """
         game = XiangqiGame()
 
         # make legal moves
-        game._board.display_board()
         self.assertEqual(game.make_move('h1', 'g3'), True)  # move red horse forward
         self.assertEqual(game.make_move('b10', 'a8'), True)  # move black horse forward
 
@@ -163,8 +189,9 @@ class TestGame(unittest.TestCase):
         #capture by advancing one point
         captive = board.get_piece_from_pos('e6')  # get black soldier
         self.assertEqual(game.make_move('e5', 'e6'), True) # red captures black
-        self.assertEqual(str(captive)[0:-1], 'bSo') # confirm captive
-
+        # confirm capture
+        self.assertEqual(captive.get_pos(), None)
+        self.assertEqual(game._board._piece_state[str(captive)], None)
 
         # try to move horizontally having not crossed river
         self.assertEqual(game.make_move('c7', 'b7'), False) # black attempts move
