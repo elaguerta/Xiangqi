@@ -169,11 +169,12 @@ class TestGame(unittest.TestCase):
         # if the game is already won, move should return false
         game._game_state = 'RED_WON'
         self.assertEqual(game.make_move('a1', 'a2'), False)
-        game._game_state = 'UNFINISHED'
+
 
         # if move is successful, update whose turn it is and return true
+        game._game_state = 'UNFINISHED'
         game.make_move('a1', 'a2')
-        # self.assertEqual(game._turn, 'black')
+        self.assertEqual(game._turn, 'black')
 
 
 
@@ -205,9 +206,20 @@ class TestGame(unittest.TestCase):
 
 
     def test_game_state(self):
-        pass
-        # if this move would win the game, update game state and return true
+        # brief game where black is mated
+        game = XiangqiGame()
+        self.assertEqual(game.make_move('b3', 'e3'), True) # red moves cannon b
+        self.assertEqual(game.make_move('h8', 'e8'), True) # black moves cannon h
 
+        self.assertEqual(game.make_move('h3', 'h6'), True) # red moves cannon h
+        self.assertEqual(game.make_move('b8', 'b4'), True) # black moves cannon b
+
+        self.assertEqual(game.make_move('e3', 'e7'), True) # red cannon captures black soldier
+        self.assertEqual(game.make_move('e8', 'e4'), True) # black captures red soldier
+
+        self.assertEqual(game.make_move('h6', 'e6'), True) # red mates black, game ends on red's turn
+        self.assertEqual(game.is_in_checkmate('black'), True)  # check checkmate
+        self.assertEqual(game.get_game_state(), 'RED_WON')  # check game state
 
     def test_example(self):
         """ Example given in problem statement. """

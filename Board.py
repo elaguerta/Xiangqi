@@ -40,6 +40,7 @@ class Board:
     def display_board(self, num_spaces = 2):
         delim = ' ' * num_spaces
         print( (delim * 10), "BLACK")
+        print(' ', delim, ("  " + delim).join(self._files))  # print letter files in order
         for rank in reversed(self._ranks):                      #print black side first, from rank 10 to rank 1
             rank_state = self._board_state[int(rank) - 1]
             if rank == '10':

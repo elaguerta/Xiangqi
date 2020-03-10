@@ -15,7 +15,6 @@ class Piece:
         """ ordered list of [ (location, occupant) tuples] from current pos to to_pos along bearing.
         Do not include current location in the list. Last item is to_pos.
         False if no such path along bearing"""
-
         try_ortho = self._board.get_ortho_path(self._pos, to_pos)
         try_diag = self._board.get_diagonal_path(self._pos, to_pos)
         try_L_shaped = self._board.get_L_path(self._pos, to_pos)
@@ -50,6 +49,9 @@ class Piece:
         if self._pos == to_pos:             # do not allow moves that would not change the game state
             return False
 
+        if self._pos == None:           # do not allow captured pieces to move
+            return False
+
         try_path = self.get_path(to_pos)
 
         if not try_path:                            # return False if no path to to_pos
@@ -73,12 +75,15 @@ class Piece:
         """
         if not self.is_legal(to_pos):
             return False
-        prev_pos = self._pos
-        if prev_pos:                                    # tell the board to clear the piece's current position
-            self._board.clear_pos(prev_pos)
+
         captive = self._board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
         if captive and captive.get_side() == self._side:    # if the to_pos is occupied by a friend, return False
             return False
+
+        # otherwise, make the move and return true
+        prev_pos = self._pos
+        if prev_pos:  # tell the board to clear the piece's current position
+            self._board.clear_pos(prev_pos)
         self._board.place_piece(self, to_pos)           # tell the board that to_pos is occupied by this piece
         self._pos = to_pos                              # update this piece's self.
         if captive:
@@ -91,16 +96,29 @@ class Piece:
         """ Reverses a move. Piece's current location must be to_pos. Puts captive, if any, on to_pos.
         Puts piece on from_pos. Reversal is assumed to be legal."""
         # restore captive, if any
-        if self.get_pos() != to_pos:
-            return False
+
         if isinstance(captive, Piece):
             self._board.place_piece(captive, to_pos)
             captive.set_pos(to_pos)
         else:
             self._board.clear_pos(to_pos)
+
         self._board.place_piece(self, from_pos)
         self._pos = from_pos
         return True
+
+    def get_possible_moves(self):
+        """ gets all possible moves available to Piece"""
+        possible_pos = self._board.get_available_positions(self._side)
+        moves = set()
+
+        if self._pos is not None:  # if piece has not been captured
+            for pos in possible_pos:  # search through possible moves
+                # if piece can legally move to pos, add move to possible moves
+                if self.is_legal(pos):
+                    moves.add((self._pos, pos))
+        # if no such move, return False
+        return moves
 
 
     def get_side(self):

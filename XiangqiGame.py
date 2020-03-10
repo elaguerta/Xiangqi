@@ -20,6 +20,9 @@ class XiangqiGame():
         if player == 'black':
             return self._black_player
 
+    def get_turn(self):
+        return self._turn
+
     def is_in_check(self, side):
         """
         Determines if color side is in check.
@@ -50,7 +53,7 @@ class XiangqiGame():
         defending_general = defender.get_general_pos()
         attack_list = attacker.get_attacks(defending_general)
         if attack_list:
-            if not defender.defend_all_checks(attack_list):
+            if not defender.defend_all_checks(attack_list, attacker):
                 return True
         return False
 
@@ -69,22 +72,25 @@ class XiangqiGame():
         update whose turn it is, and return True.
 
         """
-        turn_player = self.get_player(self._turn)
-        opp = self.get_opponent(self._turn)
         if self._game_state != 'UNFINISHED':    # if the game has already been won, return False
+            print("Game over. " , self._game_state)
             return False
+
         if from_pos == to_pos:                  # do not allow a move that does not change the board state
             return False
         if self.out_of_range(from_pos) or self.out_of_range(to_pos):    # validate that positions are within range
             return False
-        try_move = turn_player.move(from_pos, to_pos, opp)     # ask this turn's Player to attempt the move
 
+        # allow the turn to proceed
+        turn_player = self.get_player(self._turn)
+        opp = self.get_opponent(self._turn)
+        try_move = turn_player.move(from_pos, to_pos, opp)     # ask this turn's Player to attempt the move
         if not try_move:                            # if not successful, return False
             return False
 
-        # If we got to this point, move succeeded, update the turn, update the game state, and return True
-        self.update_turn()
+        # If we got to this point, move succeeded, update the game state, and return True
         self.update_game_state()
+        self.update_turn()
         return True
 
     def get_opponent(self, player):
@@ -101,14 +107,13 @@ class XiangqiGame():
             next_turn = 'black'
         else:
             next_turn = 'red'
-
         # check if most recent move has put the next player in checkmate or stalemate
         if self.is_in_checkmate(next_turn) or self.is_in_stalemate(next_turn):
             # update endgame conditions
             if self._turn == 'red':
-                self._game_state = 'BLACK_WON'
-            else:
                 self._game_state = 'RED_WON'
+            else:
+                self._game_state = 'BLACK_WON'
         return True
 
 
