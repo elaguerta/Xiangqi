@@ -1,5 +1,9 @@
-from Board import Board
-from Player import Player
+# Author: Elaine Laguerta
+# Date: 10 March 2020
+# Description: Portfolio Project, CS162 W2020
+# Implements a two player version of Xiangqi, the Chinese version of chess.
+# Checks for legal movements based on rules governing pieces. Asseses wins by checkmating or stalemating.
+# Does not handle chasing or perpetual checks.
 
 class XiangqiGame():
     def __init__(self):
