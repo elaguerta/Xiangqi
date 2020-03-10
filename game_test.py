@@ -4,7 +4,6 @@
 
 import unittest
 from XiangqiGame import XiangqiGame
-from Board import Board
 
 class TestGame(unittest.TestCase):
     def test_stalemate(self):
