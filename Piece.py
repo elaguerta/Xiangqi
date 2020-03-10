@@ -52,6 +52,10 @@ class Piece:
         if self._pos == None:           # do not allow captured pieces to move
             return False
 
+        occupant = self._board.get_piece_from_pos(to_pos)
+        if occupant and occupant._side == self._side: # if the to_pos is occupied by a friend, return False
+            return False
+
         try_path = self.get_path(to_pos)
 
         if not try_path:                            # return False if no path to to_pos
@@ -77,8 +81,6 @@ class Piece:
             return False
 
         captive = self._board.get_piece_from_pos(to_pos)    # get the piece that would be captured by this move
-        if captive and captive.get_side() == self._side:    # if the to_pos is occupied by a friend, return False
-            return False
 
         # otherwise, make the move and return true
         prev_pos = self._pos

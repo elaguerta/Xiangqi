@@ -4,8 +4,114 @@
 
 import unittest
 from XiangqiGame import XiangqiGame
+from Board import Board
 
 class TestGame(unittest.TestCase):
+    def test_stalemate(self):
+        # test a state from which red stalemates black
+        game = XiangqiGame()
+        board = game._board
+        red_pieces = game.get_player("red")._pieces
+        black_pieces = game.get_player("black")._pieces
+        for piece in black_pieces:
+            if str(piece) == "bGe":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('d9')
+                board.place_piece(piece, 'd9')  # black general on d9
+            elif str(piece) == "bAd1":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('d10')
+                board.place_piece(piece, 'd10')  # black advisor on d10
+            elif str(piece) == "bAd2":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('d8')
+                board.place_piece(piece, 'd8') # black advisor on d8
+            else:  # remove all other pieces from board
+                board.clear_pos(piece.get_pos())
+                board.clear_piece(piece)
+                piece.set_pos(None)
+
+        for piece in red_pieces:
+            if str(piece) == "rGe":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('e1')
+                board.place_piece(piece, 'e1')
+            elif str(piece) == "rCa1":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('h3')
+                board.place_piece(piece, 'h3')
+            else:  # remove all other pieces from board
+                board.clear_pos(piece.get_pos())
+                board.clear_piece(piece)
+                piece.set_pos(None)
+
+        self.assertEqual(game.make_move('h3', 'h9'), True) #red stalemates black
+        self.assertEqual(game.is_in_stalemate('red'), False)
+        self.assertEqual(game.is_in_stalemate('black'), True)
+        self.assertEqual(game.get_game_state(),'RED_WON')
+
+    def test_draw (self):
+        # I thought this would end in stalemate, but maybe it's just perpetual check
+        # hard code to an intermediate state
+        game = XiangqiGame()
+        board = game._board
+        red_pieces = game.get_player("red")._pieces
+        black_pieces = game.get_player("black")._pieces
+        for piece in black_pieces:
+            if str(piece) == "bEl1":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('c10')
+                board.place_piece(piece, 'c10')  # 1 black elephant on c10
+            elif str(piece) == "bGe":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('d9')
+                board.place_piece(piece, 'd9')  # black general on d9
+            elif str(piece) == "bEl2":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('e8')
+                board.place_piece(piece, 'e8')  # other black elephant on e8
+            else:  # remove all other pieces from board
+                board.clear_pos(piece.get_pos())
+                board.clear_piece(piece)
+                piece.set_pos(None)
+
+        for piece in red_pieces:
+            if str(piece) == "rHo1":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('g7')
+                board.place_piece(piece, 'g7')  # 1 red horse on g7
+            elif str(piece) == "rCa1":
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('e6')
+                board.place_piece(piece, 'e6')  # 1 red cannon on e6
+            elif str(piece) == "rEl1":
+                piece.set_pos('a3')
+                board.place_piece(piece, 'a3')  # 1 red elephant on a2
+            elif str(piece) == 'rAd1':
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('d3')
+                board.place_piece(piece, 'd3')  # 1 red advisor on d2
+            elif str(piece) == 'rEl2':
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('c1')
+                board.place_piece(piece, 'c1')  # other red elephant on c1
+            elif str(piece) == 'rGe':
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('e1')
+                board.place_piece(piece, 'e1')  # red general on e1
+            elif str(piece) == 'rAd2':  # other advisor on f1
+                board.clear_pos(piece.get_pos())
+                piece.set_pos('f1')
+                board.place_piece(piece, 'f1')
+            else:  # remove all other pieces from board
+                board.clear_pos(piece.get_pos())
+                board.clear_piece(piece)
+                piece.set_pos(None)
+
+        self.assertEqual(game.make_move('g7', 'e8'), True) # red horse takes black elephant
+        self.assertEqual(game.make_move('d9', 'd8'), True) # black moves general
+        game.update_turn()         # red turn
+        self.assertEqual(game.make_move('c10', 'e8'), True)  # black elephant takes red horse, disables red's cannon
 
     def test_cannon(self):
         """ test cannon movement pattern"""
@@ -205,7 +311,7 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('c5', 'b5'), True) #black moves horizontally
 
 
-    def test_game_state(self):
+    def test_checkmate(self):
         # brief game where black is mated
         game = XiangqiGame()
         self.assertEqual(game.make_move('b3', 'e3'), True) # red moves cannon b

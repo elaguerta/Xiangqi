@@ -41,13 +41,14 @@ class XiangqiGame():
     def is_in_stalemate(self, side):
         player = self.get_player(side)
         opponent = self.get_opponent(side)
-        if not player.has_available_move(opponent):
-            return True
-        return False
+        if player.has_available_move(opponent):
+            return False
+        return True
 
     def is_in_checkmate(self, side):
         """ returns True if this side's Player is in checkmate. Player is in checkmate if there is no one move that can
         defend against all current checks"""
+
         defender = self.get_player(side)
         attacker = self.get_opponent(side)
         defending_general = defender.get_general_pos()
@@ -73,7 +74,6 @@ class XiangqiGame():
 
         """
         if self._game_state != 'UNFINISHED':    # if the game has already been won, return False
-            print("Game over. " , self._game_state)
             return False
 
         if from_pos == to_pos:                  # do not allow a move that does not change the board state

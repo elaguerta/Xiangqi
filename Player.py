@@ -169,10 +169,9 @@ class Player():
             piece = self._board.get_piece_from_pos(from_pos)
             if self.puts_self_in_check(piece, to_pos, opponent):
                 remove_moves.add((from_pos, to_pos))
-
         available_moves = possible_moves - remove_moves
         if available_moves:
-            return True
+            return available_moves
         return False
 
 

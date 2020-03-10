@@ -215,12 +215,12 @@ class Board:
     def get_available_positions(self, side):
         """ returns a list of all positions that are unoccupied, or occupied by side's foe. Includes (at least)
         all possible locations that a Piece on side could occupy to on next move"""
-        positions  = zip(self._files, self._ranks)
         return_pos = []
-        for file_str, rank_str in positions:
-            occupant = self.get_piece_from_pos(file_str + rank_str)
-            if occupant is None or occupant.get_side() == side:
-                return_pos.append(file_str + rank_str)
+        for file_str in self._files:
+            for rank_str in self._ranks:
+                occupant = self.get_piece_from_pos(file_str + rank_str)
+                if occupant is None or occupant.get_side() == side:
+                    return_pos.append(file_str + rank_str)
         return return_pos
 
 

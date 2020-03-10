@@ -5,7 +5,7 @@ class GeneralPiece(Piece):
     def __init__(self, player, board):
         super().__init__(player, board)
         self._movement = 'ortho'  #
-        self._max_path_length = 1
+        self._path_length = 1
         self._pos = GeneralPiece.general_positions[player]
 
     def __repr__(self):
@@ -17,19 +17,19 @@ class GeneralPiece(Piece):
         flying_general_flag = self.is_flying_general(to_pos)
 
         if flying_general_flag:     # if flying general is possible, temporarily lift path length restriction
-            self._max_path_length = None
-
+            self._path_length = None
         # check Piece.is_legal, with max path length restriction lifted if flying general is possible
-        if not super().is_legal(to_pos):
+        if not super().is_legal(to_pos): # check with updated flying general flag
+            self._path_length = 1    # reset path length
             return False
 
         # in the case that flying general isn't possible, check that the general remains in the castle
         if not flying_general_flag and to_pos not in (self._board.get_castle_spots(self._side)):
+            self._path_length = 1
             return False
 
-        if flying_general_flag:      # reset path restriction if necessary
-            self._max_path_length = 1
-
+        # reset path restriction if necessary
+        self._path_length = 1
         return True
 
     def is_flying_general(self, to_pos):
