@@ -8,50 +8,55 @@ from CannonPiece import CannonPiece
 from Piece import Piece
 
 class Player():
-
+    """Creates Players"""
     def __init__(self, side, board):
-        self._side = side   # 'black' or 'red'
-        self._board = board
-        self._pieces = set()
+        """ Initializes a Player with side = 'red' or 'black', and a Board object. Side and Board are passed
+        by Game objects. """
+        self._side = side       # 'black' or 'red'
+        self._board = board     # the Board passed by the Game object
+        self._pieces = set()    # a set of this Player's Pieces
 
-        # initialize general and save to an instance variable for easy access. add the general to the set of this
+        # Initialize general and save to an instance variable for easy access. Add the general to the set of this
         # Player's pieces.
         self._general = (GeneralPiece(side, board))
         self._pieces.add(self._general)
 
-        # initialize 2 Advisor Pieces
+        # Create all other pieces and add them to self._pieces. Numbers are passed
+        # to index each piece class's locations, and to give each piece a unique identifier.
+
+        # initialize and add 2 Advisor Pieces
         self._pieces.add(AdvisorPiece(side, board, 1))
         self._pieces.add(AdvisorPiece(side, board, 2))
 
-        # initialize 2 Elephant pieces
+        # initialize and add 2 Elephant pieces
         self._pieces.add(ElephantPiece(side, board, 1))
         self._pieces.add(ElephantPiece(side, board, 2))
 
-        # initialize 2 Horse pieces
+        # initialize and add 2 Horse pieces
         self._pieces.add(HorsePiece(side, board, 1))
         self._pieces.add(HorsePiece(side, board, 2))
 
-        # initialize 2 chariot pieces
+        # initialize and add 2 chariot pieces
         self._pieces.add(ChariotPiece(side, board, 1))
         self._pieces.add(ChariotPiece(side, board, 2))
 
-        # initialize 2 cannon pieces
+        # initialize and add 2 cannon pieces
         self._pieces.add(CannonPiece(side, board, 1))
         self._pieces.add(CannonPiece(side, board, 2))
 
-        # initialize 5 soldiers
+        # initialize and add 5 soldiers
         self._pieces.add(SoldierPiece(side, board, 1))
         self._pieces.add(SoldierPiece(side, board, 2))
         self._pieces.add(SoldierPiece(side, board, 3))
         self._pieces.add(SoldierPiece(side, board, 4))
         self._pieces.add(SoldierPiece(side, board, 5))
 
-        # place all pieces in initial positions
+        # place all pieces on Board at their in initialized positions
         for piece in self._pieces:
             self._board.place_piece(piece, piece.get_pos())
 
     def get_defense_moves(self, attack_piece, path, opp):
-        """ returns a set of {(from_pos, to_pos)} moves that would defend Player's general from attack_piece along path.
+        """Returns a set of {(from_pos, to_pos)} moves that would defend Player's general from attack_piece along path.
         Returns the empty set if no such move.
         Attack_piece is a piece that is placing this Player's general in check. Path is the ordered list of
         [ (location, occupant) tuples] from attack piece to the other general """
@@ -92,12 +97,11 @@ class Player():
 
     def defend_all_checks(self, attackers, opp):
         """ Returns a set of moves that would defend Player's general from all checks in parameter
-        attackers. Returns empty set if no such move. The parameter attackers is a list
-        of (attack_pieces, paths) that represent all current checks against Player """
+        attackers. Returns empty set if no such move.
+        The parameter attackers is a list of (attack_pieces, paths) that comprises all current checks against Player"""
 
         # initialize set to the first set of defense moves against the first attack, then keep intersecting with each
         # subsequent set of defense moves until attackers list is exhausted
-
         attack_piece, path = attackers[0]
         # returns a set of defense moves against the first attack in the list
 
@@ -112,7 +116,7 @@ class Player():
 
 
     def puts_self_in_check(self, piece, to_pos ,opp):
-        """ returns True of a move of piece to to_pos would put self in check"""
+        """ Returns True of a move of piece to to_pos would put self in check"""
 
         from_pos = piece.get_pos()  # save piece's previous position
         try_move = piece.move(to_pos) #ask the piece to try the move
@@ -121,61 +125,62 @@ class Player():
         resulting_checks = opp.get_attacks(self.get_general_pos())
 
         # now tell the piece to reverse the move. try_move will be assigned the captive, if any
-        if isinstance(try_move, Piece):
+        if isinstance(try_move, Piece): # pass the captive if there was one
             piece.reverse_move(from_pos, to_pos, try_move)
-        elif try_move:
+        elif try_move: # if not, don't pass the captive. Reverse_move() will use a default argument of None for captive.
             piece.reverse_move(from_pos, to_pos)
 
-        if resulting_checks: # if there were any resulting checks, return True
+        if resulting_checks: # if there were any checks resulting from the move, return True
             return True
+
         return False
 
     def get_general_pos(self):
-        """ return the position of this player's general"""
+        """ Return the position of this player's general"""
         return self._general._pos
 
     def move(self, from_pos, to_pos, opp):
+        """ Calls Piece.move() if move is possible and move does not put Player's general in check.
+        Returns the result of the call to Piece.move()"""
         piece = self._board.get_piece_from_pos(from_pos)    # get the piece on from_pos.
 
-        if not piece:                                   # the from position is empty
+        if not piece:                                   # If not piece at from_pos, return False
             return False
 
-        if piece not in self._pieces:             # the piece on the from position does not belong to this player
+        if piece not in self._pieces:     # the piece on the from_pos does not belong to this player, return False
             return False
 
-        if self.puts_self_in_check(piece, to_pos, opp): # the move would result in a check on this player
+        if self.puts_self_in_check(piece, to_pos, opp): # If the the move would result in a check on this player
             return False
-        # tell the piece to attempt the move, return the result
+
+        # Otherwise, tell the piece to attempt the move, return the result
         try_move = piece.move(to_pos)
         return try_move
 
-    def get_attacks(self, opp_general_pos, board = None):
-        """returns a list of (attacker, path) tuples
+    def get_attacks(self, opp_general_pos):
+        """Returns a list of (attacker, path) tuples,
          for any piece of this Player's that has a shot at the opposing general's position. Returns an empty list if
          no such attack."""
-        if not board:
-            board = self._board
         attackers = []
-        for piece in self._pieces:
+        for piece in self._pieces: # for each of this Player's pieces
+            # if the piece has a shot at the other general
             if piece.get_pos() is not None and piece.is_legal(opp_general_pos):
-                path = piece.get_path(opp_general_pos)
-                attackers.append((piece,path))
+                path = piece.get_path(opp_general_pos) # get the path to the opposing general
+                attackers.append((piece,path)) # save this piece and the attack path
         return attackers
 
     def has_available_move(self, opponent):
-        """ returns True if this player has at least one legal move"""
-
-       # get all possible moves for all pieces
+        """ Returns a set of this Player's available moves against opponent, or False if there are no such moves.
+        Available moves are any legal moves that would not result in placing this Player in check."""
         possible_moves = set()
         remove_moves = set()
-        for piece in self._pieces:
+        for piece in self._pieces:      # get all possible moves for all pieces
             piece_moves = piece.get_possible_moves()
-            # filter any move that would place self in check
-            for from_pos, to_pos in piece_moves:
+            possible_moves = possible_moves.union(piece_moves)
+            for from_pos, to_pos in piece_moves:   # find any move that would place self in check
                 if self.puts_self_in_check(piece, to_pos, opponent):
                     remove_moves.add((from_pos, to_pos))
-            possible_moves = possible_moves.union(piece_moves)
-        possible_moves = possible_moves - remove_moves
+        possible_moves = possible_moves - remove_moves # remove the moves that would result in self check
         if possible_moves:
             return possible_moves
         return False
