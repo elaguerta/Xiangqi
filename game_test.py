@@ -62,6 +62,54 @@ class TestGame(unittest.TestCase):
         game._black_player = black_player
         return game
 
+    def test_cannon_win(self):
+        game = self.setUp()
+        board = game._board
+        red_pieces = game.get_player("red")._pieces
+        black_pieces = game.get_player("black")._pieces
+
+        # initialize empty board
+        board._board_state = [  # board state represented as a 2D array
+            [None for file in board._files] for rank in board._ranks  # initialize all positions to None
+        ]
+
+        board._piece_state = {}  # dictionary of piece: pos pairs. When pieces are captured, value is set to None
+
+        for piece in black_pieces:
+            piece.set_pos(None)
+
+        for piece in red_pieces:
+            piece.set_pos(None)
+
+        for piece in black_pieces:
+            if str(piece) == "bGe":
+                piece.set_pos('d10')
+                board.place_piece(piece, 'd10')
+            elif str(piece) == "bAd1":
+                piece.set_pos('d8')
+                board.place_piece(piece, 'd8')
+            elif str(piece) == "bAd2":
+                piece.set_pos('e9')
+                board.place_piece(piece, 'e9')
+
+        for piece in red_pieces:
+            if isinstance(piece, GeneralPiece):
+                piece.set_pos('f3')
+                board.place_piece(piece, 'f3')
+            if str(piece) == "rAd1":
+                piece.set_pos('d3')
+                board.place_piece(piece, 'd3')
+            if str(piece) == "rCa1":
+                piece.set_pos('d1')
+                board.place_piece(piece, 'd1')
+
+        self.assertEqual(game.make_move('f3', 'e3'), True)  # red general
+        self.assertEqual(game.make_move('d10', 'e10'), True)  # black general
+        self.assertEqual(game.make_move('d1', 'd8'), True)  # red captures advisor
+        self.assertEqual(game.make_move('d9', 'd8'), False)  # black advisor is pinned to general and cannot move
+        self.assertEqual(game.make_move('e10', 'd10'), True)  # black general escapes being pinned
+        board.display_board()
+
     def test_stalemate_2(self):
         game = self.setUp()
         board = game._board
@@ -88,18 +136,15 @@ class TestGame(unittest.TestCase):
             elif str(piece) == "bEl1":
                 piece.set_pos('c6')
                 board.place_piece(piece, 'c6')
-            # elif str(piece) == "bSo1":
-            #     piece.set_pos('a7')
-            #     board.place_piece(piece, 'a7')
 
         for piece in red_pieces:
             if isinstance(piece, GeneralPiece):
                 piece.set_pos('e2')
                 board.place_piece(piece, 'e2')
-            if str(piece) == "rHo1":
+            elif str(piece) == "rHo1":
                 piece.set_pos('f8')
                 board.place_piece(piece, 'f8')
-
+                horse = piece
         self.assertEqual(game.make_move('f8', 'd7'), True) # red horse
         self.assertEqual(game.make_move('d10', 'd9'), True) # black general
         self.assertEqual(game.make_move('d7', 'b8'), True)  # red horse forks black general
@@ -108,10 +153,6 @@ class TestGame(unittest.TestCase):
         self.assertEqual(game.make_move('d10', 'd9'), True)  # only move available to black
         self.assertEqual(game.make_move('c6', 'e7'), True)  # red horse checks general
         self.assertEqual(game.is_in_check('black'), True)  # black would lose by perpetual chasing
-
-
-
-
 
     def test_fork(self):
         # test a state from which red stalemates black
@@ -162,7 +203,7 @@ class TestGame(unittest.TestCase):
     def test_draw (self):
         # I thought this would end in stalemate, but maybe it's just perpetual check
         # hard code to an intermediate state
-        game = XiangqiGame()
+        game = self.setUp()
         board = game._board
         red_pieces = game.get_player("red")._pieces
         black_pieces = game.get_player("black")._pieces
@@ -224,7 +265,7 @@ class TestGame(unittest.TestCase):
 
     def test_cannon(self):
         """ test cannon movement pattern"""
-        game = XiangqiGame()
+        game = self.setUp()
         # make legal moves on both sides in all 4 directions
         self.assertEqual(game.make_move('h3', 'h7'), True)  # move red cannon forward
         self.assertEqual(game.make_move('b8', 'b5'), True) # move black cannon forward
@@ -250,7 +291,7 @@ class TestGame(unittest.TestCase):
 
     def test_horse(self):
         """ test horse movement pattern """
-        game = XiangqiGame()
+        game = self.setUp()
 
         # make legal moves
         self.assertEqual(game.make_move('h1', 'g3'), True)  # move red horse forward
@@ -269,7 +310,7 @@ class TestGame(unittest.TestCase):
 
     def test_general(self):
         """ tests basic rules limiting general's movement"""
-        game = XiangqiGame()
+        game = self.setUp()
         # test basic movement forward and to both sides
         self.assertEqual(game.make_move('e1', 'e2'), True)  # move red general forward
         self.assertEqual(game.make_move('e10', 'e9'), True)  # move black general forward
@@ -297,7 +338,7 @@ class TestGame(unittest.TestCase):
 
     def test_advisor(self):
         """ test advisor movement pattern"""
-        game = XiangqiGame()
+        game = self.setUp()
 
         # make legal moves
         self.assertEqual(game.make_move('d1', 'e2'), True) # move red advisor within castle
@@ -324,7 +365,7 @@ class TestGame(unittest.TestCase):
 
     def test_elephant(self):
         """ test elephant movement pattern"""
-        game = XiangqiGame()
+        game = self.setUp()
 
         #test legal moves
         self.assertEqual(game.make_move('g1', 'i3'), True) # red elephant moves 2 diagonal
@@ -354,7 +395,7 @@ class TestGame(unittest.TestCase):
 
     def test_piece(self):
         """ test basic piece logic on chariot piece"""
-        game = XiangqiGame()
+        game = self.setUp()
 
         #try to jump over a soldier. Should fail.
         self.assertEqual(game.make_move('a1', 'a5'), False)
@@ -373,7 +414,7 @@ class TestGame(unittest.TestCase):
 
     def test_move(self):
         """ tests move logic at game level"""
-        game = XiangqiGame()
+        game = self.setUp()
 
         # try to move a black piece when turn is red's. Should fail.
         self.assertEqual(game.make_move('a10', 'a9'), False)
@@ -395,7 +436,7 @@ class TestGame(unittest.TestCase):
 
     def test_soldier(self):
         """ tests basic rules limiting soldier's movement"""
-        game = XiangqiGame()
+        game = self.setUp()
         board = game._board
 
         # move by advancing one point
@@ -422,7 +463,7 @@ class TestGame(unittest.TestCase):
 
     def test_checkmate(self):
         # brief game where black is mated
-        game = XiangqiGame()
+        game = self.setUp()
         self.assertEqual(game.make_move('b3', 'e3'), True) # red moves cannon b
         self.assertEqual(game.make_move('h8', 'e8'), True) # black moves cannon h
 
@@ -438,7 +479,7 @@ class TestGame(unittest.TestCase):
 
     def test_example(self):
         """ Example given in problem statement. """
-        game = XiangqiGame()
+        game = self.setUp()
         self.assertEqual(game.make_move('c1', 'e3'), True)
         self.assertEqual(game.is_in_check('black'), False)
         self.assertEqual(game.make_move('e7', 'e6'), True)

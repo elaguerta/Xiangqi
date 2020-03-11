@@ -91,6 +91,7 @@ class Piece:
             self._board.clear_piece(captive)                # clear the captured piece from the board
             captive.set_pos(None)                       # captive sets its current position to None
             return captive                                  # return the captive if any
+        return True
 
     def reverse_move(self, from_pos, to_pos, captive = None):
         """ Reverses a move. Piece's current location must be to_pos. Puts captive, if any, on to_pos.

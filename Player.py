@@ -113,8 +113,7 @@ class Player():
 
     def puts_self_in_check(self, piece, to_pos ,opp):
         """ returns True of a move of piece to to_pos would put self in check"""
-        if not piece:
-            print(to_pos)
+
         from_pos = piece.get_pos()  # save piece's previous position
         try_move = piece.move(to_pos) #ask the piece to try the move
 
