@@ -131,7 +131,7 @@ class Board:
 
         if int_pos and try_dest:
             path.append( (int_pos, self.get_piece_from_pos(int_pos)) )
-            path.append(try_dest)
+            path += try_dest
 
         return path
 

@@ -5,6 +5,7 @@ from SoldierPiece import SoldierPiece
 from AdvisorPiece import AdvisorPiece
 from HorsePiece import HorsePiece
 from CannonPiece import CannonPiece
+from Piece import Piece
 
 class Player():
 
@@ -99,13 +100,16 @@ class Player():
 
         attack_piece, path = attackers[0]
         # returns a set of defense moves against the first attack in the list
+
         defense_moves = self.get_defense_moves(attack_piece, path, opp)
         if defense_moves:
             for index in range(1, len(attackers)):
                 attack_piece, path = attackers[index]
                 # intersect the set of defense moves against this attack with the previous set
                 defense_moves = defense_moves.intersection(self.get_defense_moves(attack_piece, path, opp))
-        return defense_moves # defense moves contains the set of moves that can defend all checks in attackers list
+        return defense_moves  # defense moves contains the set of moves that can defend all checks in attackers list
+
+
 
     def puts_self_in_check(self, piece, to_pos ,opp):
         """ returns True of a move of piece to to_pos would put self in check"""
@@ -118,8 +122,10 @@ class Player():
         resulting_checks = opp.get_attacks(self.get_general_pos())
 
         # now tell the piece to reverse the move. try_move will be assigned the captive, if any
-        if try_move:
+        if isinstance(try_move, Piece):
             piece.reverse_move(from_pos, to_pos, try_move)
+        elif try_move:
+            piece.reverse_move(from_pos, to_pos)
 
         if resulting_checks: # if there were any resulting checks, return True
             return True

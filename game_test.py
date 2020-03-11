@@ -1,6 +1,4 @@
 # Author: Elaine Laguerta
-# Date: 21 January 2019
-# Description: Tests the library class
 
 import unittest
 from XiangqiGame_single_module import XiangqiGame
@@ -64,7 +62,58 @@ class TestGame(unittest.TestCase):
         game._black_player = black_player
         return game
 
-    def test_stalemate(self):
+    def test_stalemate_2(self):
+        game = self.setUp()
+        board = game._board
+        red_pieces = game.get_player("red")._pieces
+        black_pieces = game.get_player("black")._pieces
+
+        # initialize empty board
+        board._board_state = [  # board state represented as a 2D array
+            [None for file in board._files] for rank in board._ranks  # initialize all positions to None
+        ]
+
+        board._piece_state = {}  # dictionary of piece: pos pairs. When pieces are captured, value is set to None
+
+        for piece in black_pieces:
+            piece.set_pos(None)
+
+        for piece in red_pieces:
+            piece.set_pos(None)
+
+        for piece in black_pieces:
+            if str(piece) == "bGe":
+                piece.set_pos('d10')
+                board.place_piece(piece, 'd10')
+            elif str(piece) == "bEl1":
+                piece.set_pos('c6')
+                board.place_piece(piece, 'c6')
+            # elif str(piece) == "bSo1":
+            #     piece.set_pos('a7')
+            #     board.place_piece(piece, 'a7')
+
+        for piece in red_pieces:
+            if isinstance(piece, GeneralPiece):
+                piece.set_pos('e2')
+                board.place_piece(piece, 'e2')
+            if str(piece) == "rHo1":
+                piece.set_pos('f8')
+                board.place_piece(piece, 'f8')
+
+        self.assertEqual(game.make_move('f8', 'd7'), True) # red horse
+        self.assertEqual(game.make_move('d10', 'd9'), True) # black general
+        self.assertEqual(game.make_move('d7', 'b8'), True)  # red horse forks black general
+        self.assertEqual(game.make_move('d9', 'd10'), True)  # black general runs
+        self.assertEqual(game.make_move('b8', 'c6'), True) # red horse captures elephant
+        self.assertEqual(game.make_move('d10', 'd9'), True)  # only move available to black
+        self.assertEqual(game.make_move('c6', 'e7'), True)  # red horse checks general
+        self.assertEqual(game.is_in_check('black'), True)  # black would lose by perpetual chasing
+
+
+
+
+
+    def test_fork(self):
         # test a state from which red stalemates black
         game = self.setUp()
         board = game._board

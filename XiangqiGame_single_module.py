@@ -108,13 +108,32 @@ class XiangqiGame():
         else:
             next_turn = 'red'
         # check if most recent move has put the next player in checkmate or stalemate
-        if self.is_in_checkmate(next_turn) or self.is_in_stalemate(next_turn):
+        if self.is_in_checkmate(next_turn):
             # update endgame conditions
             if self._turn == 'red':
                 self._game_state = 'RED_WON'
             else:
                 self._game_state = 'BLACK_WON'
-        return True
+            print("CHECKMATE", self._game_state)
+            return
+
+        if self.is_in_stalemate(next_turn):
+            # update endgame conditions
+            if self._turn == 'red':
+                self._game_state = 'RED_WON'
+            else:
+                self._game_state = 'BLACK_WON'
+            print("STALEMATE", self._game_state)
+            return
+
+        if self.is_in_check(self._turn): # on the other hand, if the turn ends with this player still in check, player loses
+            # update endgame conditions
+            if self._turn == 'red':
+                self._game_state = 'BLACK_WON'
+            else:
+                self._game_state = 'RED_WON'
+            print("LEFT IN CHECK", self._game_state)
+            return
 
 
     def update_turn(self):
