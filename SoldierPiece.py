@@ -20,7 +20,7 @@ class SoldierPiece(Piece):
 
         # assign a position from SoldierPiece
         self._id = id_num # id_num is passed as argument, by Player, and will be 1 or 2
-        self._pos = SoldierPiece.soldier_positions[player][id_num - 1] # keep track of positions used based on id number
+        self._pos = SoldierPiece.soldier_positions[side][id_num - 1] # keep track of positions used based on id number
 
 
     def __repr__(self):

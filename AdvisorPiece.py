@@ -19,7 +19,7 @@ class AdvisorPiece(Piece):
 
         # Assign a position from Advisor Piece.
         self._id = id_num      # id_num is passed as argument, by Player, and will be 1 or 2
-        self._pos = AdvisorPiece.advisor_positions[player][id_num - 1] # keep track of positions used based on id number
+        self._pos = AdvisorPiece.advisor_positions[side][id_num - 1] # keep track of positions used based on id number
 
     def __repr__(self):
         """Return an informative label for this Piece: ["r" or "b"] + "Ad" + [id_num for this specific piece].
