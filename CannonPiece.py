@@ -20,7 +20,7 @@ class CannonPiece(Piece):
         self._pos = CannonPiece.cannon_postions[player][id_num - 1]  # keep track of positions used based on id number
 
     def __repr__(self):
-        """Return an informative label for this Piece: ["r" or "b"] + "Ad" + [id_num for this specific piece].
+        """Return an informative label for this Piece: ["r" or "b"] + "Ca" + [id_num for this specific piece].
         This is intended to be unique for every piece in a Game """
         return self._side[0] + "Ca" + str(self._id)
 
