@@ -109,6 +109,8 @@ class Player():
 
     def puts_self_in_check(self, piece, to_pos ,opp):
         """ returns True of a move of piece to to_pos would put self in check"""
+        if not piece:
+            print(to_pos)
         from_pos = piece.get_pos()  # save piece's previous position
         try_move = piece.move(to_pos) #ask the piece to try the move
 
@@ -163,15 +165,14 @@ class Player():
         remove_moves = set()
         for piece in self._pieces:
             piece_moves = piece.get_possible_moves()
-            possible_moves  = possible_moves.union(piece_moves)
-        # filter any move that would place self in check
-        for from_pos, to_pos in possible_moves:
-            piece = self._board.get_piece_from_pos(from_pos)
-            if self.puts_self_in_check(piece, to_pos, opponent):
-                remove_moves.add((from_pos, to_pos))
-        available_moves = possible_moves - remove_moves
-        if available_moves:
-            return available_moves
+            # filter any move that would place self in check
+            for from_pos, to_pos in piece_moves:
+                if self.puts_self_in_check(piece, to_pos, opponent):
+                    remove_moves.add((from_pos, to_pos))
+            possible_moves = possible_moves.union(piece_moves)
+        possible_moves = possible_moves - remove_moves
+        if possible_moves:
+            return possible_moves
         return False
 
 

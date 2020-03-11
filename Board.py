@@ -68,6 +68,7 @@ class Board:
         rank,file = self.get_loc_from_pos(to_pos)
         self._board_state[rank][file] = piece  # piece now occupies to_pos
         self._piece_state[str(piece)] = to_pos
+        return True
 
     def clear_piece(self, piece):
         """ sets the piece_state for None. Used for keeping track of captures"""
@@ -219,7 +220,7 @@ class Board:
         for file_str in self._files:
             for rank_str in self._ranks:
                 occupant = self.get_piece_from_pos(file_str + rank_str)
-                if occupant is None or occupant.get_side() == side:
+                if occupant is None or occupant.get_side() != side:
                     return_pos.append(file_str + rank_str)
         return return_pos
 

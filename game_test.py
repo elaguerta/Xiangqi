@@ -3,46 +3,107 @@
 # Description: Tests the library class
 
 import unittest
-from XiangqiGame import XiangqiGame
+from XiangqiGame_single_module import XiangqiGame
+from Board import Board
+from Player import Player
+from GeneralPiece import GeneralPiece
+from ElephantPiece import ElephantPiece
+from ChariotPiece import ChariotPiece
+from SoldierPiece import SoldierPiece
+from AdvisorPiece import AdvisorPiece
+from HorsePiece import HorsePiece
+from CannonPiece import CannonPiece
 
 class TestGame(unittest.TestCase):
+    def setUp(self):
+        game = XiangqiGame()
+        board = Board()
+        red_player = Player('red', board)
+        black_player = Player('black', board)
+        red_player._pieces = set()
+        black_player._pieces = set()
+
+        for player in [red_player, black_player]:
+            side = player._side
+            player._general = (GeneralPiece(side, board))
+            player._pieces.add(player._general)
+
+            # initialize 2 Advisor Pieces
+            player._pieces.add(AdvisorPiece(side, board, 1))
+            player._pieces.add(AdvisorPiece(side, board, 2))
+
+            # initialize 2 Elephant pieces
+            player._pieces.add(ElephantPiece(side, board, 1))
+            player._pieces.add(ElephantPiece(side, board, 2))
+
+            # initialize 2 Horse pieces
+            player._pieces.add(HorsePiece(side, board, 1))
+            player._pieces.add(HorsePiece(side, board, 2))
+
+            # initialize 2 chariot pieces
+            player._pieces.add(ChariotPiece(side, board, 1))
+            player._pieces.add(ChariotPiece(side, board, 2))
+
+            # initialize 2 cannon pieces
+            player._pieces.add(CannonPiece(side, board, 1))
+            player._pieces.add(CannonPiece(side, board, 2))
+
+            # initialize 5 soldiers
+            player._pieces.add(SoldierPiece(side, board, 1))
+            player._pieces.add(SoldierPiece(side, board, 2))
+            player._pieces.add(SoldierPiece(side, board, 3))
+            player._pieces.add(SoldierPiece(side, board, 4))
+            player._pieces.add(SoldierPiece(side, board, 5))
+
+            # place all pieces in initial positions
+            for piece in player._pieces:
+                board.place_piece(piece, piece.get_pos())
+
+        game._board = board
+        game._red_player = red_player
+        game._black_player = black_player
+        return game
+
     def test_stalemate(self):
         # test a state from which red stalemates black
-        game = XiangqiGame()
+        game = self.setUp()
         board = game._board
         red_pieces = game.get_player("red")._pieces
         black_pieces = game.get_player("black")._pieces
+
+        # initialize empty board
+        board._board_state = [  # board state represented as a 2D array
+            [None for file in board._files] for rank in board._ranks  # initialize all positions to None
+        ]
+
+        board._piece_state = {}  # dictionary of piece: pos pairs. When pieces are captured, value is set to None
+
+        for piece in black_pieces:
+            piece.set_pos(None)
+
+        for piece in red_pieces:
+            piece.set_pos(None)
+
         for piece in black_pieces:
             if str(piece) == "bGe":
-                board.clear_pos(piece.get_pos())
                 piece.set_pos('d9')
                 board.place_piece(piece, 'd9')  # black general on d9
             elif str(piece) == "bAd1":
-                board.clear_pos(piece.get_pos())
                 piece.set_pos('d10')
                 board.place_piece(piece, 'd10')  # black advisor on d10
             elif str(piece) == "bAd2":
-                board.clear_pos(piece.get_pos())
                 piece.set_pos('d8')
                 board.place_piece(piece, 'd8') # black advisor on d8
-            else:  # remove all other pieces from board
-                board.clear_pos(piece.get_pos())
-                board.clear_piece(piece)
-                piece.set_pos(None)
 
+        cannon_found = False
         for piece in red_pieces:
-            if str(piece) == "rGe":
-                board.clear_pos(piece.get_pos())
+            if isinstance(piece, GeneralPiece):
                 piece.set_pos('e1')
                 board.place_piece(piece, 'e1')
-            elif str(piece) == "rCa1":
-                board.clear_pos(piece.get_pos())
+            if str(piece) == 'rCa1':
                 piece.set_pos('h3')
                 board.place_piece(piece, 'h3')
-            else:  # remove all other pieces from board
-                board.clear_pos(piece.get_pos())
-                board.clear_piece(piece)
-                piece.set_pos(None)
+                cannon_found = True
 
         self.assertEqual(game.make_move('h3', 'h9'), True) #red stalemates black
         self.assertEqual(game.is_in_stalemate('red'), False)

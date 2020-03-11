@@ -57,7 +57,6 @@ class Piece:
             return False
 
         try_path = self.get_path(to_pos)
-
         if not try_path:                            # return False if no path to to_pos
             return False
 
@@ -113,7 +112,6 @@ class Piece:
         """ gets all possible moves available to Piece"""
         possible_pos = self._board.get_available_positions(self._side)
         moves = set()
-
         if self._pos is not None:  # if piece has not been captured
             for pos in possible_pos:  # search through possible moves
                 # if piece can legally move to pos, add move to possible moves
