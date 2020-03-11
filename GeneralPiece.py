@@ -2,11 +2,11 @@ from Piece import Piece
 
 class GeneralPiece(Piece):
     general_positions = {'red':'e1', 'black':'e10'}
-    def __init__(self, player, board):
-        super().__init__(player, board)
+    def __init__(self, side, board):
+        super().__init__(side, board)
         self._movement = 'ortho'  #
         self._path_length = 1
-        self._pos = GeneralPiece.general_positions[player]
+        self._pos = GeneralPiece.general_positions[side]
 
     def __repr__(self):
         return self._side[0] + "Ge"

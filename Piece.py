@@ -1,7 +1,7 @@
 class Piece:
-    def __init__(self, player, board):
+    def __init__(self, side, board):
         self._board = board
-        self._side = player
+        self._side = side
         self._movement = None           # ortho, diagonal, or L shaped
         self._path_length = None    # depends on piece, default is unlimited
         self._jumps = 0                 # number of other pieces allowed to jump. Only cannon jumps - exactly 1 - piece.
