@@ -1,12 +1,12 @@
 # portfolio-project
 
-Author: Elaine Laguerta //
-Date: 11 March 2020 //
+Author: Elaine Laguerta  
+Date: 11 March 2020  
 Description: Portfolio project for CS162 W2020. All classes are combined in this file per project submission requirements.
--Implements a two-player version of Xiangqi, Chinese chess.
--Supports checking for legal moves based on specific piece type, and disallows moves that place one's self in check.
--Supports stalemate and checkmate endgames.
--Does not implement perpetual checks or chasing endgames.
+* Implements a two-player version of Xiangqi, Chinese chess.
+* Supports checking for legal moves based on specific piece type, and disallows moves that place one's self in check.
+* Supports stalemate and checkmate endgames.
+* Does not implement perpetual checks or chasing endgames.
 
 Here is the project spec:
 
