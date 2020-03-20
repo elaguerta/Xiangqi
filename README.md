@@ -1,5 +1,15 @@
 # portfolio-project
 
+Author: Elaine Laguerta
+Date: 11 March 2020
+Description: Portfolio project for CS162 W2020. All classes are combined in this file per project submission requirements.
+-Implements a two-player version of Xiangqi, Chinese chess.
+-Supports checking for legal moves based on specific piece type, and disallows moves that place one's self in check.
+-Supports stalemate and checkmate endgames.
+-Does not implement perpetual checks or chasing endgames.
+
+Here is the project spec:
+
 Write a class named XiangqiGame for playing an abstract board game called xiangqi.   Please read the "Board", "Rules", and "Pieces" sections on [the Wikipedia page](https://en.wikipedia.org/wiki/Xiangqi).  You do not have to implement the rules regarding perpetual check or chasing.  You **do** need to correctly handle stalemate.  You also need to correctly handle all piece-specific rules, e.g. generals aren't allowed to "see" each other, horses can be blocked, elephants can't cross the river, etc.
 
 A general is in check if it could be captured on the opposing player's next move. A player cannot make a move that puts or leaves their general in check. The Wikipedia page says "The game ends when one player captures the other's general", but it's more accurate to say that it ends when one player **checkmates** the other's general.  You don't actually capture a general, instead you have to put it in such a position that it cannot escape being in check, meaning that no matter what, it could be captured on the next move.  This works the same as in chess, if you're familiar with that game.
