@@ -2,7 +2,7 @@
 
 Author: Elaine Laguerta  
 Date: 11 March 2020  
-Description: Portfolio project for CS162 W2020. All classes are combined in this file per project submission requirements.
+Description: Portfolio project for Intro to Computer Science II (CS162 - Python), Oregon State University, W2020
 * Implements a two-player version of Xiangqi, Chinese chess.
 * Supports checking for legal moves based on specific piece type, and disallows moves that place one's self in check.
 * Supports stalemate and checkmate endgames.
