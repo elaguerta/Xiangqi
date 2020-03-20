@@ -10,7 +10,7 @@ Description: Portfolio project for Intro to Computer Science II (CS162 - Python)
 
 To play the game in a two player person, run 
 ```
-python3 <play_game.py
+python3 play_game.py
 ```
 in your terminal.
 
