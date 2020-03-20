@@ -8,7 +8,11 @@ Description: Portfolio project for Intro to Computer Science II (CS162 - Python)
 * Supports stalemate and checkmate endgames.
 * Does not implement perpetual checks or chasing endgames.
 
-To play the game in a two player person, run '''python3 <play_game.py''' in your terminal.
+To play the game in a two player person, run 
+```
+python3 <play_game.py
+```
+in your terminal.
 
 ## Project Specification 
 *copyright Tim Alcon, Oregon State Univeristy*
